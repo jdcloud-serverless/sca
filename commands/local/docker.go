@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os/exec"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -20,7 +19,7 @@ const (
 	host    = "unix:///var/run/docker.sock"
 	version = "1.24"
 
-	IMAGE           = "function-test-cn-north-1.jcr.service.jdcloud.com/%s:latest"
+	IMAGE           = "sca1/%s:latest"
 	TARGET_PORT     = "9090"
 	TARGET_VOL_PATH = "/function/code"
 
@@ -57,7 +56,7 @@ func NewDockerClient() (DockerClient, error) {
 func (d *dockerClient) PullImage(runtime string) error {
 	cmdStr := fmt.Sprintf("docker pull %s", getImageName(runtime))
 	cmd := GenExecCommand(cmdStr)
-	if err := cmd.Start(); err != nil {
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 	return nil
@@ -162,11 +161,7 @@ func IsLinux() bool {
 
 func GenExecCommand(commandStr string) *exec.Cmd {
 	if IsLinux() {
-		command := fmt.Sprintf("%s %s", "-c", commandStr)
-		commands := strings.Split(command, " ")
-		return exec.Command("/bin/bash", commands...)
+		return exec.Command("/bin/bash", "-c", commandStr)
 	}
-	command := fmt.Sprintf("%s %s", "/C", commandStr)
-	commands := strings.Split(command, " ")
-	return exec.Command("cmd.exe", commands...)
+	return exec.Command("cmd.exe", "/C", commandStr)
 }
