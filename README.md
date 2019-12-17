@@ -1,1 +1,1 @@
-# JD Cloud Serverless Application（CSA） CLI
+# JD Serverless Cloud Application（SCA） CLI
