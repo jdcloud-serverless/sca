@@ -8,6 +8,54 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/containerd/containerd/errdefs",
+			"repository": "https://github.com/containerd/containerd",
+			"revision": "8c7e6be290003a354fcf163dbd4c7f21f97a709f",
+			"branch": "master",
+			"path": "/errdefs"
+		},
+		{
+			"importpath": "github.com/docker/distribution/registry/api/errcode",
+			"repository": "https://github.com/docker/distribution",
+			"revision": "a8371794149d1d95f1e846744b05c87f2f825e5a",
+			"branch": "master",
+			"path": "/registry/api/errcode"
+		},
+		{
+			"importpath": "github.com/docker/docker/api/types",
+			"repository": "https://github.com/docker/docker",
+			"revision": "3f2d1eb95de61a1a8cfcd1ffdea837cc868c7953",
+			"branch": "master",
+			"path": "/api/types"
+		},
+		{
+			"importpath": "github.com/docker/docker/errdefs",
+			"repository": "https://github.com/docker/docker",
+			"revision": "3f2d1eb95de61a1a8cfcd1ffdea837cc868c7953",
+			"branch": "master",
+			"path": "/errdefs"
+		},
+		{
+			"importpath": "github.com/docker/docker/pkg/streamformatter",
+			"repository": "https://github.com/docker/docker",
+			"revision": "3f2d1eb95de61a1a8cfcd1ffdea837cc868c7953",
+			"branch": "master",
+			"path": "/pkg/streamformatter"
+		},
+		{
+			"importpath": "github.com/docker/go-connections/nat",
+			"repository": "https://github.com/docker/go-connections",
+			"revision": "f2a43445ca32a74e9855ddf9f84d7f9cedde55f9",
+			"branch": "master",
+			"path": "/nat"
+		},
+		{
+			"importpath": "github.com/docker/go-units",
+			"repository": "https://github.com/docker/go-units",
+			"revision": "519db1ee28dcc9fd2474ae59fca29a810482bfb1",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/dsnet/compress",
 			"repository": "https://github.com/dsnet/compress",
 			"revision": "da652975a8eea9fa0735aba8056747a751db0bd3",
@@ -98,6 +146,12 @@
 			"revision": "9085dacd1e1eca033047a5514195779360363ced",
 			"branch": "master",
 			"path": "/internal/xxh32"
+		},
+		{
+			"importpath": "github.com/pkg/errors",
+			"repository": "https://github.com/pkg/errors",
+			"revision": "7f95ac13edff643b8ce5398b6ccab125f8a20c1a",
+			"branch": "master"
 		},
 		{
 			"importpath": "github.com/satori/go.uuid",

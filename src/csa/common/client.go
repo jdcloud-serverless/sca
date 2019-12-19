@@ -1,12 +1,18 @@
 package common
 
 import (
-	"common/logger"
-
 	"git.jd.com/jcloud-api-gateway/jcloud-sdk-go/core"
 	functionClient "git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/function/client"
 	logsClient "git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/logs/client"
 )
+
+type NoLogger struct{}
+
+func NewNoLogger() *NoLogger {
+	return &NoLogger{}
+}
+
+func (logger NoLogger) Log(level int, message ...interface{}) {}
 
 func NewFunctionClient(user *User) *functionClient.FunctionClient {
 	credential := core.NewCredential(user.AccessKey, user.SecretKey)
