@@ -45,9 +45,6 @@ func init() {
 	// logs
 	RootCommand.AddCommand(logs.NewLogsCommand())
 
-	// package
-	RootCommand.AddCommand(_package.NewPackageCommand())
-
 	// validate
 	RootCommand.AddCommand(validate.NewValidateCommand())
 
