@@ -3,7 +3,7 @@ package validate
 import (
 	"fmt"
 
-	"csagithub.com/jdcloud-serverless/sca/common"
+	"github.com/jdcloud-serverless/sca/common"
 
 	"github.com/spf13/cobra"
 )
