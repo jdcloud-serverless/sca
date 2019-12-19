@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/function/models"
+	"github.com/jcloud-api-gateway/jcloud-sdk-go/services/function/models"
 
 	"github.com/olekukonko/tablewriter"
 )

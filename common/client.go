@@ -1,9 +1,9 @@
 package common
 
 import (
-	"git.jd.com/jcloud-api-gateway/jcloud-sdk-go/core"
-	functionClient "git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/function/client"
-	logsClient "git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/logs/client"
+	"github.com/jcloud-api-gateway/jcloud-sdk-go/core"
+	functionClient "github.com/jcloud-api-gateway/jcloud-sdk-go/services/function/client"
+	logsClient "github.com/jcloud-api-gateway/jcloud-sdk-go/services/logs/client"
 )
 
 type NoLogger struct{}
