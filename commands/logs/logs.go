@@ -6,6 +6,7 @@ import (
 	"github.com/jdcloud-serverless/sca/common"
 
 	functionApis "github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
+	logsApis "github.com/jdcloud-api/jdcloud-sdk-go/services/logs/apis"
 	"github.com/spf13/cobra"
 )
 
@@ -56,26 +57,26 @@ func getFunction(user *common.User, functionName string) (logSetId, logTopicId s
 }
 
 func findLog(user *common.User, logSetId, logTopicId string) {
-	// // https://docs.jdcloud.com/cn/log-service/api/search?content=API
-	// client := common.NewLogClient(user)
-	// req := logsApis.NewSearchRequest(user.Region, logSetId, logTopicId, "fulltext")
-	// req.SetPageSize(int(count))
-	// req.SetPageNumber(1)
-	// if startTime != "" {
-	// 	req.SetStartTime(startTime)
-	// }
-	// if endTime != "" {
-	// 	req.SetStartTime(endTime)
-	// }
+	// https://docs.jdcloud.com/cn/log-service/api/search?content=API
+	client := common.NewLogClient(user)
+	req := logsApis.NewSearchRequest(user.Region, logSetId, logTopicId, "fulltext")
+	req.SetPageSize(int(count))
+	req.SetPageNumber(1)
+	if startTime != "" {
+		req.SetStartTime(startTime)
+	}
+	if endTime != "" {
+		req.SetStartTime(endTime)
+	}
 
-	// resp, err := client.Search(req)
-	// if err != nil {
-	// 	fmt.Printf("find log err=%s\n", err.Error())
-	// 	return
-	// }
-	// if resp.Error.Code != 0 || resp.Error.Code != 200 {
-	// 	fmt.Printf("find log err=%s\n", resp.Error.Message)
-	// 	return
-	// }
-	// fmt.Printf("logs:\n%v\n", resp.Result.Data)
+	resp, err := client.Search(req)
+	if err != nil {
+		fmt.Printf("find log err=%s\n", err.Error())
+		return
+	}
+	if resp.Error.Code != 0 || resp.Error.Code != 200 {
+		fmt.Printf("find log err=%s\n", resp.Error.Message)
+		return
+	}
+	fmt.Printf("logs:\n%v\n", resp.Result.Data)
 }
