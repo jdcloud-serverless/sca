@@ -5,8 +5,8 @@ import (
 
 	"github.com/jdcloud-serverless/sca/common"
 
-	functionApis "git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/function/apis"
-	logsApis "git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/logs/apis"
+	functionApis "github.com/jcloud-api-gateway/jcloud-sdk-go/services/function/apis"
+	logsApis "github.com/jcloud-api-gateway/jcloud-sdk-go/services/logs/apis"
 	"github.com/spf13/cobra"
 )
 
