@@ -7,8 +7,8 @@ import (
 
 	"github.com/jdcloud-serverless/sca/common"
 
-	"git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/function/apis"
-	"git.jd.com/jcloud-api-gateway/jcloud-sdk-go/services/function/client"
+	"github.com/jcloud-api-gateway/jcloud-sdk-go/services/function/apis"
+	"github.com/jcloud-api-gateway/jcloud-sdk-go/services/function/client"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
