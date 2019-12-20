@@ -10,6 +10,7 @@ import (
 	logsApis "github.com/jdcloud-api/jdcloud-sdk-go/services/logs/apis"
 	"github.com/spf13/cobra"
 	"time"
+	"strings"
 )
 
 var functionName string
@@ -111,8 +112,16 @@ func findLog(user *common.User, logSetId, logTopicId string) {
 			}
 		}
 	}
-	req.SetStartTime(start.Format("2006-01-02T15:04:05Z0700"))
-	req.SetEndTime(end.Format("2006-01-02T15:04:05Z0700"))
+	strStart :=start.Format("2006-01-02T15:04:05Z0700")
+	strEnd :=end.Format("2006-01-02T15:04:05Z0700")
+
+	if strings.Index(strStart,"Z") == len(strStart) - 1{
+		strStart +="0000"
+		strEnd += "0000"
+	}
+
+	req.SetStartTime(strStart)
+	req.SetEndTime(strEnd)
 
 	pageSize := 50
 	req.SetPageSize(pageSize)
