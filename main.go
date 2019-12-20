@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/jdcloud-serverless/sca/commands/build"
 	"github.com/jdcloud-serverless/sca/commands/config"
 	"github.com/jdcloud-serverless/sca/commands/deploy"
 	"github.com/jdcloud-serverless/sca/commands/function"
@@ -28,7 +27,7 @@ func init() {
 	RootCommand.AddCommand(initialize.NewInitCommand())
 
 	// build
-	RootCommand.AddCommand(build.NewBuildCommand())
+	//RootCommand.AddCommand(build.NewBuildCommand())
 
 	// config
 	RootCommand.AddCommand(config.NewConfigCommand())
