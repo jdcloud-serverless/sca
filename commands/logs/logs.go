@@ -20,8 +20,8 @@ var duration int32
 func NewLogsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logs",
-		Short: "logs",
-		Long:  "logs",
+		Short: "get function's invoke logs from LogService",
+		Long:  "get function's invoke logs from LogService",
 		Run:   runLogs,
 	}
 	cmd.Flags().StringVarP(&functionName, "name", "n", "", "Function name.")

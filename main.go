@@ -16,7 +16,7 @@ import (
 )
 
 var RootCommand = &cobra.Command{
-	Short: "JD Cloud Serverless Application",
+	Short: "JD Serverless Cloud Application",
 }
 
 // add all child command

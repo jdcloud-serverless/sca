@@ -48,8 +48,8 @@ const tmpContent = `Resources:
 func NewInitCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "init",
-		Short: "init",
-		Long:  "init",
+		Short: "init a function template",
+		Long:  "init a function template",
 		Run:   initFun,
 	}
 	cmd.Flags().StringVarP(&runtime, "runtime", "r", "", "Runtime of this funtion.Include python3.6,python3.7,python2.7")

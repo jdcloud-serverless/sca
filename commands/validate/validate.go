@@ -13,8 +13,8 @@ var templateFileName string
 func NewValidateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "validate",
-		Short: "validate",
-		Long:  "validate",
+		Short: "validate template",
+		Long:  "validate template",
 		Run:   runValidate,
 	}
 	cmd.Flags().StringVarP(&templateFileName, "template-file", "t", "", "The template file.")

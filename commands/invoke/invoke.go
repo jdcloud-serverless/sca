@@ -28,8 +28,8 @@ var (
 func NewInvokeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "invoke",
-		Short: "invoke",
-		Long:  "invoke",
+		Short: "invoke function in cloud",
+		Long:  "invoke function in cloud",
 		Run:   invoke,
 	}
 	InitInvokeCmdFlags(cmd)

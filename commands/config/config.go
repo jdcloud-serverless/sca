@@ -18,8 +18,8 @@ secret_key=%s
 func NewConfigCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "config",
-		Short: "config",
-		Long:  "config",
+		Short: "config user credential info",
+		Long:  "config user credential info",
 		Run:   config,
 	}
 	return cmd

@@ -13,8 +13,8 @@ import (
 func NewFunctionDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
-		Short: "delete",
-		Long:  "delete",
+		Short: "delete function in cloud",
+		Long:  "delete function in cloud",
 		Run:   deleteRun,
 	}
 	cmd.Flags().StringVarP(&functionName, "name", "n", "", "name of this funtion")

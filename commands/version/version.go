@@ -13,10 +13,10 @@ const (
 func NewVersionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "version",
-		Short: "version",
-		Long:  "version",
+		Short: "sca version",
+		Long:  "sca version",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("JD Cloud Serverless Application Version:", Version)
+			fmt.Println("JD Serverless Cloud Application Version:", Version)
 		},
 	}
 	return cmd

@@ -13,8 +13,8 @@ import (
 func NewFunctionInfoCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "info",
-		Short: "info",
-		Long:  "info",
+		Short: "get function info in cloud",
+		Long:  "get function info in cloud",
 		Run:   infoRun,
 	}
 

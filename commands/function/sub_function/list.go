@@ -16,8 +16,8 @@ import (
 func NewFunctionListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "list",
-		Long:  "list",
+		Short: "get list of functions in cloud",
+		Long:  "get list of functions in cloud",
 		Run: func(cmd *cobra.Command, args []string) {
 			list()
 		},

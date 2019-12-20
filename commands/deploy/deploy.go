@@ -22,8 +22,8 @@ var templatePath string
 func NewDeployCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "deploy",
-		Short: "deploy",
-		Long:  "deploy",
+		Short: "deploy functions in template to cloud",
+		Long:  "deploy functions in template to cloud",
 		Run:   deploy,
 	}
 	InitDeployCmdFlags(cmd)
