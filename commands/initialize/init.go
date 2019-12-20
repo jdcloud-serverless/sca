@@ -66,6 +66,11 @@ func initFun(cmd *cobra.Command, args []string) {
 	}
 	if output == "" {
 		output, _ = os.Getwd()
+	}else {
+		if !filepath.IsAbs(output){
+			currentPath,_ :=os.Getwd()
+			output = fmt.Sprintf("%s/%s",currentPath,output)
+		}
 	}
 	if projectName == "" {
 		projectName = common.DefaultProjectName
