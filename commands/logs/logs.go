@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/jdcloud-serverless/sca/common"
@@ -8,12 +9,13 @@ import (
 	functionApis "github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	logsApis "github.com/jdcloud-api/jdcloud-sdk-go/services/logs/apis"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 var functionName string
 var startTime string
 var endTime string
-var count int32
+var duration int32
 
 func NewLogsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -23,9 +25,9 @@ func NewLogsCommand() *cobra.Command {
 		Run:   runLogs,
 	}
 	cmd.Flags().StringVarP(&functionName, "name", "n", "", "Function name.")
-	cmd.Flags().StringVarP(&startTime, "starttime", "s", "", "log start time.")
-	cmd.Flags().StringVarP(&endTime, "endtime", "e", "", "log end time.")
-	cmd.Flags().Int32VarP(&count, "count", "c", 1000, "count of logs.")
+	cmd.Flags().StringVarP(&startTime, "start-time", "s", "", "log start time.")
+	cmd.Flags().StringVarP(&endTime, "end-time", "e", "", "log end time.")
+	cmd.Flags().Int32VarP(&duration, "duration", "d", 0, "count of logs.")
 
 	return cmd
 }
@@ -56,27 +58,105 @@ func getFunction(user *common.User, functionName string) (logSetId, logTopicId s
 	return resp.Result.Data.LogSetId, resp.Result.Data.LogTopicId, nil
 }
 
+type FunctionContent struct {
+	RequestId    string `json:"request_id"`
+	FunctionName string `json:"function_name"`
+	Version      string `json:"version"`
+	Content      string `json:"content"`
+	Message      string `json:"message"`
+}
+
 func findLog(user *common.User, logSetId, logTopicId string) {
 	// https://docs.jdcloud.com/cn/log-service/api/search?content=API
 	client := common.NewLogClient(user)
 	req := logsApis.NewSearchRequest(user.Region, logSetId, logTopicId, "fulltext")
-	req.SetPageSize(int(count))
-	req.SetPageNumber(1)
-	if startTime != "" {
-		req.SetStartTime(startTime)
-	}
-	if endTime != "" {
-		req.SetStartTime(endTime)
-	}
 
-	resp, err := client.Search(req)
-	if err != nil {
-		fmt.Printf("find log err=%s\n", err.Error())
-		return
+	var err error
+	var start *time.Time
+	var end *time.Time
+	now := time.Now()
+	if duration > 0 {
+		start = &time.Time{}
+		end = &time.Time{}
+
+		*end = now
+		*start = end.Add(time.Duration(-duration) * time.Second)
+	} else {
+		duration = 600
+		if startTime != "" {
+			start = &time.Time{}
+			if *start, err = time.ParseInLocation("2006-01-02 15:04:05", startTime, time.Local); err != nil {
+				fmt.Printf("start-time(%s),parse err=%s", startTime, err.Error())
+				return
+			}
+		}
+		if endTime != "" {
+			end = &time.Time{}
+			if *end, err = time.ParseInLocation("2006-01-02 15:04:05", endTime, time.Local); err != nil {
+				fmt.Printf("end-time(%s),parse err=%s", endTime, err.Error())
+				return
+			}
+		}
+		if start == nil {
+			start = &time.Time{}
+			*start = end.Add(time.Duration(-duration) * time.Second)
+		}
+		if end == nil {
+			end = &time.Time{}
+			*end = start.Add(time.Duration(duration) * time.Second)
+		}
 	}
-	if resp.Error.Code != 0 || resp.Error.Code != 200 {
-		fmt.Printf("find log err=%s\n", resp.Error.Message)
-		return
+	req.SetStartTime(start.Format("2006-01-02T15:04:05Z0700"))
+	req.SetEndTime(end.Format("2006-01-02T15:04:05Z0700"))
+
+	pageSize := 50
+	req.SetPageSize(pageSize)
+	currentPageNumber := 1
+	for {
+		req.SetPageNumber(currentPageNumber)
+		resp, err := client.Search(req)
+		if err != nil {
+			fmt.Printf("find log err=%s\n", err.Error())
+			return
+		}
+		if resp.Error.Code != 0 && resp.Error.Code != 200 {
+			fmt.Printf("find log err=%s\n", resp.Error.Message)
+			return
+		}
+
+		for _, val := range resp.Result.Data {
+			if data, ok := val.(map[string]interface{}); ok {
+				t := int64(data["time"].(float64))
+				content := data["content"]
+				funContent := &FunctionContent{}
+				if err := json.Unmarshal([]byte(content.(string)), funContent); err == nil {
+					if funContent.Content != "" {
+						fmt.Printf("%s %s %s\n", time.Unix(0, t*1e6).Format(time.RFC3339), funContent.RequestId, funContent.Content)
+					} else {
+						fmt.Printf("%s %s %s\n", time.Unix(0, t*1e6).Format(time.RFC3339), funContent.RequestId, funContent.Message)
+					}
+				} else {
+					fmt.Printf("unmarshal (%s),err=%s\n", content, err.Error())
+				}
+			}
+		}
+
+		pages := int(resp.Result.Total) / pageSize
+		if int(resp.Result.Total)%pageSize > 0 {
+			pages += 1
+		}
+		if currentPageNumber < pages {
+			yes := "y"
+			fmt.Printf("\n[PageNumber:%d/Total:%d]\n", currentPageNumber, pages)
+			fmt.Println("Continue to print or not? Y/N")
+			fmt.Scanln(&yes)
+			if yes == "y" || yes == "Y" {
+				currentPageNumber += 1
+			} else {
+				return
+			}
+		} else {
+			return
+		}
 	}
-	fmt.Printf("logs:\n%v\n", resp.Result.Data)
 }
