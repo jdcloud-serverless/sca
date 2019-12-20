@@ -111,7 +111,7 @@ func initFun(cmd *cobra.Command, args []string) {
 			MemorySize:  128,
 			Runtime:     runtime,
 			Description: "demo",
-			CodeUri:     "'./'",
+			CodeUri:     "./",
 		},
 	}
 	writeTemplate(tmpl.Resources[funName])
