@@ -10,7 +10,6 @@ import (
 	logsApis "github.com/jdcloud-api/jdcloud-sdk-go/services/logs/apis"
 	"github.com/spf13/cobra"
 	"time"
-	"strings"
 )
 
 var functionName string
@@ -41,6 +40,10 @@ func runLogs(cmd *cobra.Command, args []string) {
 	// get user info
 	user := common.GetUser()
 	if logSetId, logTopicId, err := getFunction(user, functionName); err == nil {
+		if logSetId == "" || logTopicId == ""{
+			fmt.Println("you have not set logset.")
+			return
+		}
 		findLog(user, logSetId, logTopicId)
 	}
 }
@@ -112,13 +115,8 @@ func findLog(user *common.User, logSetId, logTopicId string) {
 			}
 		}
 	}
-	strStart :=start.Format("2006-01-02T15:04:05Z0700")
-	strEnd :=end.Format("2006-01-02T15:04:05Z0700")
-
-	if strings.Index(strStart,"Z") == len(strStart) - 1{
-		strStart +="0000"
-		strEnd += "0000"
-	}
+	strStart :=start.Format("2006-01-02T15:04:05+0800")
+	strEnd :=end.Format("2006-01-02T15:04:05+0800")
 
 	req.SetStartTime(strStart)
 	req.SetEndTime(strEnd)
