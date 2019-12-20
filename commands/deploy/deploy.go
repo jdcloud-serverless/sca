@@ -4,16 +4,15 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"os"
-
-	"github.com/jdcloud-serverless/sca/common"
-
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/client"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/models"
+	"github.com/jdcloud-serverless/sca/common"
 	"github.com/mholt/archiver"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"os"
+	"strings"
 )
 
 const ZipFileSuffix = "code.zip"
@@ -158,12 +157,29 @@ func getCodeRealPath(codeUri string) (string, error) {
 	if len(codeUri) == 0 {
 		return "", errors.New("[Error] Code Uri is empty ...")
 	}
+	templateAbsDir := getFileAbsDir(templatePath)
 	if codeUri[0] == '.' {
-		curDir, _ := os.Getwd()
-		return curDir + codeUri[1:], nil
-	} else {
-		return codeUri, nil
+		return templateAbsDir+codeUri[1:], nil
+	}  else if codeUri[0] == '/'{
+		return codeUri,nil
+	} else{
+		return templateAbsDir + "/" + codeUri, nil
 	}
+}
+
+func getFileAbsDir(path string)string{
+	res := ""
+	if path[0] == '.' {
+		curDir,_ := os.Getwd()
+		res =  curDir+path[1:]
+	}  else if path[0] == '/'{
+		res =  path
+	} else{
+		curDir,_ := os.Getwd()
+		res =  curDir + "/" + path
+	}
+	lastIndex := strings.LastIndex(res,"/")
+	return res[:lastIndex]
 }
 
 func compress(codeUri string) (string, error) {
