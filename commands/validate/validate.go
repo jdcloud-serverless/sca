@@ -17,7 +17,7 @@ func NewValidateCommand() *cobra.Command {
 		Long:  "validate",
 		Run:   runValidate,
 	}
-	cmd.Flags().StringVarP(&templateFileName, "name", "n", "", "Function name.")
+	cmd.Flags().StringVarP(&templateFileName, "template-file", "t", "", "The template file.")
 	return cmd
 }
 
