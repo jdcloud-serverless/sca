@@ -59,15 +59,6 @@ func runValidate(cmd *cobra.Command, args []string) {
 			return
 		}
 
-		if tmpl.FunctionProperties.VPCConfig.Vpc == "" || tmpl.FunctionProperties.VPCConfig.Subnet == "" {
-			fmt.Printf("VPCConfig(%v) is invalid.", tmpl.FunctionProperties.Env)
-			return
-		}
-		if tmpl.FunctionProperties.LogConfig.LogSet == "" || tmpl.FunctionProperties.LogConfig.LogTopic == "" {
-			fmt.Printf("LogConfig(%v) is invalid.", tmpl.FunctionProperties.LogConfig)
-			return
-		}
-
 		if !CodeUriCheck(tmpl.FunctionProperties.CodeUri) {
 			fmt.Printf("CodeUri(%s) is invalid.", tmpl.FunctionProperties.CodeUri)
 			return
