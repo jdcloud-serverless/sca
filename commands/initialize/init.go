@@ -12,26 +12,21 @@ import (
 
 var runtime string
 var output string
-var funName string
-
-const (
-	FUNNAME     = "handler"
-	DEMOPROJECT = "helloworld"
-)
+var projectName string
 
 const indexPthon = `def handler(event,context):
     print(event)
     return "hello world"
 `
-const readmeContent = `helloworld`
-const tmpContent = `Resources:
+
+const tmplContent = `Resources:
   default:
       Type: TencentCloud::Serverless::Function
       Properties:
         CodeUri: ./
         Type: Event
         Description: This is a template function
-        Handler: index.main_handler
+        Handler: index.handler
         MemorySize: 128
         Runtime: Python3.6
         Timeout: 3
@@ -54,14 +49,13 @@ func NewInitCommand() *cobra.Command {
 	}
 	cmd.Flags().StringVarP(&runtime, "runtime", "r", "", "Runtime of this funtion.Include python3.6,python3.7,python2.7")
 	cmd.Flags().StringVarP(&output, "output-dir", "o", "", "The path where will output the initialized app into.")
-	cmd.Flags().StringVarP(&funName, "name", "n", "", "Function name.")
-	//cmd.Flags().StringVarP(&location,"help","h","","Show this message and exit")
+	cmd.Flags().StringVarP(&projectName, "name", "n", "", "project name.")
 	return cmd
 }
 
 func initFun(cmd *cobra.Command, args []string) {
 	if runtime == "" {
-		runtime = common.RUNTIME_Python2_7
+		runtime = common.RUNTIME_Python3_6
 	} else {
 		switch runtime {
 		case common.RUNTIME_Python2_7, common.RUNTIME_Python3_6, common.RUNTIME_Python3_7:
@@ -73,11 +67,11 @@ func initFun(cmd *cobra.Command, args []string) {
 	if output == "" {
 		output, _ = os.Getwd()
 	}
-	if funName == "" {
-		funName = FUNNAME
+	if projectName == "" {
+		projectName = common.DefaultProjectName
 	}
 
-	funPath := fmt.Sprintf("%s/%s", output, DEMOPROJECT)
+	funPath := fmt.Sprintf("%s/%s", output, projectName)
 	if err := os.MkdirAll(funPath, os.ModePerm); err != nil {
 		fmt.Printf("create path err=%s\n", err.Error())
 	}
@@ -103,18 +97,18 @@ func initFun(cmd *cobra.Command, args []string) {
 		Transform:                common.DefaultTransform,
 		Resources:                map[string]*common.FunctionTemplate{},
 	}
-	tmpl.Resources[funName] = &common.FunctionTemplate{
+	tmpl.Resources[common.DefaultFunctionName] = &common.FunctionTemplate{
 		Type: common.DefaultFunctionType,
 		FunctionProperties: common.FunctionProperties{
-			Handler:     fmt.Sprintf("index.%s", funName),
+			Handler:     "index.handler",
 			Timeout:     3,
 			MemorySize:  128,
 			Runtime:     runtime,
-			Description: "demo",
+			Description: fmt.Sprintf("This is a template of function which name is \"%s\"", common.DefaultFunctionName),
 			CodeUri:     "./",
 		},
 	}
-	writeTemplate(tmpl.Resources[funName])
+	writeTemplate(tmpl.Resources[projectName])
 	if o, err := common.Marshal(&tmpl); err != nil {
 		fmt.Printf("marsharl template.yaml err=%s\n", err.Error())
 	} else {
@@ -138,9 +132,7 @@ func writeRootFile_python(funPath, runtime string) error {
 		fmt.Printf("create index.py err=%s\n", err.Error())
 	}
 	defer rootFile.Close()
-	rootFile.WriteString(fmt.Sprintf("def %s(event,contet):\n"+
-		"  print(event)\n"+
-		"  return \"hello world\"\n", funName))
+	rootFile.WriteString(indexPthon)
 	return nil
 }
 
@@ -154,5 +146,5 @@ func writeTemplate(tmpl *common.FunctionTemplate) {
 }
 
 func writeTemplate_python(tmpl *common.FunctionTemplate) {
-	tmpl.FunctionProperties.Handler = fmt.Sprintf("index.%s", funName)
+
 }

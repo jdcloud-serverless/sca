@@ -12,6 +12,9 @@ const (
 	DefaultTransform                = "JDCloud::Serverless-2019-11-10"
 	DefaultFunctionType             = "JDCloud::Serverless::Function"
 
+	DefaultFunctionName = "test-function"
+	DefaultProjectName  = "testproject"
+
 	RUNTIME_Python2_7 = "python2.7"
 	RUNTIME_Python3_6 = "python3.6"
 	RUNTIME_Python3_7 = "python3.7"
