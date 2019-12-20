@@ -15,7 +15,7 @@ import (
 var functionName string
 var startTime string
 var endTime string
-var duration int32
+var duration int64
 
 func NewLogsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -27,7 +27,7 @@ func NewLogsCommand() *cobra.Command {
 	cmd.Flags().StringVarP(&functionName, "name", "n", "", "Function name.")
 	cmd.Flags().StringVarP(&startTime, "start-time", "s", "", "log start time.")
 	cmd.Flags().StringVarP(&endTime, "end-time", "e", "", "log end time.")
-	cmd.Flags().Int32VarP(&duration, "duration", "d", 0, "count of logs.")
+	cmd.Flags().Int64VarP(&duration, "duration", "d", 0, "count of logs.")
 
 	return cmd
 }
@@ -72,38 +72,43 @@ func findLog(user *common.User, logSetId, logTopicId string) {
 	req := logsApis.NewSearchRequest(user.Region, logSetId, logTopicId, "fulltext")
 
 	var err error
-	var start *time.Time
-	var end *time.Time
-	now := time.Now()
-	if duration > 0 {
-		start = &time.Time{}
-		end = &time.Time{}
 
-		*end = now
-		*start = end.Add(time.Duration(-duration) * time.Second)
+	now := time.Now()
+	start := now
+	end := now
+	if duration > 0 {
+		start = end.Add(time.Duration(-duration) * time.Second)
 	} else {
 		duration = 600
-		if startTime != "" {
-			start = &time.Time{}
-			if *start, err = time.ParseInLocation("2006-01-02 15:04:05", startTime, time.Local); err != nil {
+		if startTime == "" && endTime == "" {
+			start = end.Add(time.Duration(-duration) * time.Second)
+		} else if startTime != "" && endTime != "" {
+			if start, err = time.ParseInLocation("2006-01-02 15:04:05", startTime, time.Local); err != nil {
 				fmt.Printf("start-time(%s),parse err=%s", startTime, err.Error())
 				return
 			}
-		}
-		if endTime != "" {
-			end = &time.Time{}
-			if *end, err = time.ParseInLocation("2006-01-02 15:04:05", endTime, time.Local); err != nil {
+			if end, err = time.ParseInLocation("2006-01-02 15:04:05", endTime, time.Local); err != nil {
 				fmt.Printf("end-time(%s),parse err=%s", endTime, err.Error())
 				return
 			}
-		}
-		if start == nil {
-			start = &time.Time{}
-			*start = end.Add(time.Duration(-duration) * time.Second)
-		}
-		if end == nil {
-			end = &time.Time{}
-			*end = start.Add(time.Duration(duration) * time.Second)
+			if int(end.Sub(start).Seconds()) > 24*60*60 {
+				fmt.Printf("start-time and end-time interval > 24h")
+			}
+		}else {
+			if startTime != "" {
+				if start, err = time.ParseInLocation("2006-01-02 15:04:05", startTime, time.Local); err != nil {
+					fmt.Printf("start-time(%s),parse err=%s", startTime, err.Error())
+					return
+				}
+				end = start.Add(time.Second*time.Duration(duration))
+			}
+			if endTime != "" {
+				if end, err = time.ParseInLocation("2006-01-02 15:04:05", endTime, time.Local); err != nil {
+					fmt.Printf("end-time(%s),parse err=%s", endTime, err.Error())
+					return
+				}
+				start = end.Add(time.Second*time.Duration(-duration))
+			}
 		}
 	}
 	req.SetStartTime(start.Format("2006-01-02T15:04:05Z0700"))
