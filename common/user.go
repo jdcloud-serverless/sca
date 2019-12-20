@@ -62,8 +62,8 @@ func GetUser() *User {
 
 func init() {
 	home, _ := Home()
-	path := home + "/.csa/"
-	UserInfoPath = home + "/.csa/config"
+	path := home + "/.sca/"
+	UserInfoPath = home + "/.sca/config"
 	os.MkdirAll(path, 0777)
 }
 
