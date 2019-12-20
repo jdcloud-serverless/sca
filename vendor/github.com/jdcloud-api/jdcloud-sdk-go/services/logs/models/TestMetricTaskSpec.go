@@ -17,20 +17,23 @@
 package models
 
 
-type SearchLogContextSpec struct {
+type TestMetricTaskSpec struct {
 
-    /* 查询anchor,基于该值偏移进行上下文检索  */
-    Anchor []interface{} `json:"anchor"`
+    /* 聚合函数,支持 count sum max min avg  */
+    Aggregate string `json:"aggregate"`
 
-    /* 搜索方向,默认both,可取值:up,down,both (Optional) */
-    Direction string `json:"direction"`
+    /* 测试内容  */
+    Content []string `json:"content"`
 
-    /* 日志记录ID  */
-    Id string `json:"id"`
+    /* 查询字段,支持 英文字母 数字 下划线 中划线 点（中文日志原文和各产品线的key）  */
+    DataField string `json:"dataField"`
 
-    /* 查看上下文行数大小，最大支持200  */
-    LineSize int64 `json:"lineSize"`
+    /* 过滤语法，可以为空 (Optional) */
+    FilterContent string `json:"filterContent"`
 
-    /* 查询日志时返回的时间戳  */
-    Time int64 `json:"time"`
+    /* 是否打开过滤  */
+    FilterOpen string `json:"filterOpen"`
+
+    /* 过滤类型，只能是fulltext和 advance  */
+    FilterType string `json:"filterType"`
 }

@@ -17,20 +17,23 @@
 package models
 
 
-type SearchLogContextSpec struct {
+type UpdateMetricTaskSpec struct {
 
-    /* 查询anchor,基于该值偏移进行上下文检索  */
-    Anchor []interface{} `json:"anchor"`
+    /* 自定义单位  */
+    CustomUnit string `json:"customUnit"`
 
-    /* 搜索方向,默认both,可取值:up,down,both (Optional) */
-    Direction string `json:"direction"`
+    /* 过滤语法，可以为空 (Optional) */
+    FilterContent string `json:"filterContent"`
 
-    /* 日志记录ID  */
-    Id string `json:"id"`
+    /* 是否打开过滤  */
+    FilterOpen string `json:"filterOpen"`
 
-    /* 查看上下文行数大小，最大支持200  */
-    LineSize int64 `json:"lineSize"`
+    /* 过滤类型，只能是fulltext和 advance  */
+    FilterType string `json:"filterType"`
 
-    /* 查询日志时返回的时间戳  */
-    Time int64 `json:"time"`
+    /* 监控任务名称,同一日志主题下唯一，支持中文 大小写英文字母 下划线 中划线 数字，且不超过32  */
+    Name string `json:"name"`
+
+    /* 单位  */
+    Unit string `json:"unit"`
 }
