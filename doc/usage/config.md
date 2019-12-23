@@ -8,3 +8,13 @@
 完成 config 操作后，sca 会将配置保存到用户目录下的 `.sca/config` 文件中。
 
 除了使用 `sca config` 对 sca 进行配置外，还可以通过直接修改 `.sca/config` 文件为 sca 进行配置。
+
+
+```
+#sca config
+[>] JDCould accountid = 11111(your acount id)
+[>] JDCould region = cn-north-1
+[>] JDCould access-key = 0123abcd(your ak)
+[>] JDCould secret-key = abcd0123(your sk)
+
+```
