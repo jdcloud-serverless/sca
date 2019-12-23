@@ -10,3 +10,9 @@
 
 
 ## 备注
+## 示例
+```
+# sca validate -t mysca/testproject/template.yaml
+validate success.
+
+```

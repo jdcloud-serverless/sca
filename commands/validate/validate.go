@@ -64,5 +64,5 @@ func runValidate(cmd *cobra.Command, args []string) {
 			return
 		}
 	}
-	fmt.Print("validate success.")
+	fmt.Print("validate success.\n")
 }
