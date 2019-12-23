@@ -6,7 +6,7 @@
 
  参数 | 简写 | 必填 | 描述 | 示例
  ------------ |------------| ------------|------------|------------
- name|-n|是|获取指定函数的日志|-n testproject
+ name|-n|是|获取指定函数的日志|-n myfunction
  duration|-d|否|获取最近 x 秒 的日志	|-d 600
  start-time|-s|否|获取指定开始时间之后的日志，若无end-time，默认10min|-s "2019-7-12 00:00:00"
  end-time|-e|否|获取指定开始时间之前的日志，若无start-time，默认10min	|-e "2019-7-12 00:10:00"
@@ -25,7 +25,7 @@
 
 ## 示例
 ```
-# sca logs -n csa-001 -d 600000
+# sca logs -n sca-001 -d 600000
 2019-12-19T10:35:05+08:00 boue3nfsqrshctda7hp792adjrap4r6r Report Invoke boue3nfsqrshctda7hp792adjrap4r6r,Duration :7.54ms  BilledDuration: 100ms  Memory Size: 128 MB
 2019-12-19T10:35:05+08:00 boue3nfsqrshctda7hp792adjrap4r6r End Invoke
 2019-12-19T10:35:05+08:00 boue3nfsqrshctda7hp792adjrap4r6r {}
@@ -44,7 +44,7 @@
 2019-12-18T17:31:32+08:00 botw3dovepe5iek2wap4ue5a6kverf5t Start Invoke
 
 
-# sca logs -n csa-001 -s "2019-12-19 10:00:00" -e "2019-12-19 11:00:00"
+# sca logs -n sca-001 -s "2019-12-19 10:00:00" -e "2019-12-19 11:00:00"
 2019-12-19T10:35:05+08:00 boue3nfsqrshctda7hp792adjrap4r6r Report Invoke boue3nfsqrshctda7hp792adjrap4r6r,Duration :7.54ms  BilledDuration: 100ms  Memory Size: 128 MB
 2019-12-19T10:35:05+08:00 boue3nfsqrshctda7hp792adjrap4r6r End Invoke
 2019-12-19T10:35:05+08:00 boue3nfsqrshctda7hp792adjrap4r6r {}

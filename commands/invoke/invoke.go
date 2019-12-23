@@ -54,6 +54,7 @@ func invoke(cmd *cobra.Command, args []string) {
 
 	eventStr, err := readEventFile(eventFile)
 	if err != nil {
+		fmt.Println("read event file err=",err)
 		return
 	}
 
