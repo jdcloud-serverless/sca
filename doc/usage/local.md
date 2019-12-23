@@ -16,3 +16,16 @@
 `event.json`文件保存本次调用的事件信息，必须是json格式
 
 `function_name`模板文件中的函数名称
+
+## 示例
+```
+[root@localhost sca]# ./bin/sca local -t ./helloworld/template.yaml -e ./event.json handler
+{
+	"code": 0,
+	"return": "hello world",
+	"stdout": "{u'k': u'v'}\n",
+	"stderr": "",
+	"memory_used": "0.11m",
+	"time_used": "804.942067ms"
+}
+```
