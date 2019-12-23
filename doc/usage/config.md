@@ -9,7 +9,7 @@
 
 除了使用 `sca config` 对 sca 进行配置外，还可以通过直接修改 `.sca/config` 文件为 sca 进行配置。
 
-
+## 示例
 ```
 #sca config
 [>] JDCould accountid = 11111(your acount id)
