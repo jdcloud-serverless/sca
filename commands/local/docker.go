@@ -56,7 +56,8 @@ func NewDockerClient() (DockerClient, error) {
 func (d *dockerClient) PullImage(runtime string) error {
 	cmdStr := fmt.Sprintf("docker pull %s", getImageName(runtime))
 	cmd := GenExecCommand(cmdStr)
-	if err := cmd.Run(); err != nil {
+	if out, err := cmd.CombinedOutput(); err != nil {
+		fmt.Printf("%v\n\n", string(out))
 		return err
 	}
 	return nil
