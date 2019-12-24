@@ -6,7 +6,7 @@
 
  参数 | 简写 | 必填 | 描述 | 示例
 ------------ |------------| ------------|------------|------------
- template-file|-t|是|template文件名 |-t ./templage.yml
+ template|-t|是|template文件名 |-t ./templage.yml
 
 
 ## 备注

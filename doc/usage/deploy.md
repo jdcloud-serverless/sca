@@ -4,7 +4,7 @@ sca deploy 命令可以将template.yaml文件定义的函数资源部署到云�
 
 ## 用法
 
-`.sca/deploy -t ./template.yaml` 或  `.sca/deploy --template ./template.yaml`
+`sca/deploy -t ./template.yaml` 或  `sca/deploy --template ./template.yaml`
 
 `template.yaml`文件可以通过`sca init`命令生成模板，针对函数属性对模板进行修改即可。
 

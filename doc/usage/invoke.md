@@ -4,15 +4,15 @@ sca invoke 命令可以远程调用云端已经存在的函数资源
 
 ## 用法
 
-`sca invoke -e event.json -n function_name`
+ 参数 | 简写 | 必填 | 描述 | 示例
+ ------------ |------------| ------------|------------|------------
+ name|-n|是|调用指定函数|-n myfunction
+ event|-e|否|指定测试模版文件，若不指定则测试模板则默认传 key:value 字符串	|-e ./event.json
 
-`-e` 参数指定json格式的触发事件的路径
-
-`-n` 参数指定待执行的函数名称
 
 ## 示例
 ```
-sca invoke -n sca-001 -e ./event.json
+# sca invoke -n sca-001 -e ./event.json
 2019-12-23T18:12:01+08:00  bp095tamssuc3eknva3tktf77a3jjjh1  Start Invoke
 2019-12-23T18:12:01+08:00  bp095tamssuc3eknva3tktf77a3jjjh1  {u'key_001': u'value_001'}
 2019-12-23T18:12:01+08:00  bp095tamssuc3eknva3tktf77a3jjjh1  End Invoke
