@@ -22,7 +22,7 @@ func NewLogsCommand() *cobra.Command {
 		Use:   "logs",
 		Short: "get function's invoke logs from LogService",
 		Long:  "get function's invoke logs from LogService",
-		Run:   runLogs,
+		RunE:   runLogs,
 	}
 	cmd.Flags().StringVarP(&functionName, "name", "n", "", "Function name.")
 	cmd.Flags().StringVarP(&startTime, "start-time", "s", "", "log start time.")
@@ -32,20 +32,19 @@ func NewLogsCommand() *cobra.Command {
 	return cmd
 }
 
-func runLogs(cmd *cobra.Command, args []string) {
+func runLogs(cmd *cobra.Command, args []string)error {
 	if functionName == "" {
-		fmt.Printf("function name is empty.")
-		return
+		return fmt.Errorf("function name is empty.")
 	}
 	// get user info
 	user := user.GetUser()
 	if logSetId, logTopicId, err := getFunction(user, functionName); err == nil {
 		if logSetId == "" || logTopicId == ""{
-			fmt.Println("you have not set logset.")
-			return
+			return fmt.Errorf("you have not set logset.")
 		}
 		findLog(user, logSetId, logTopicId)
 	}
+	return nil
 }
 
 func getFunction(user *user.User, functionName string) (logSetId, logTopicId string, err error) {

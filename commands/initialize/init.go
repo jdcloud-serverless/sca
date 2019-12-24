@@ -44,7 +44,7 @@ func NewInitCommand() *cobra.Command {
 		Use:   "init",
 		Short: "init a function template",
 		Long:  "init a function template",
-		Run:   initFun,
+		RunE:   initFun,
 	}
 	cmd.Flags().StringVarP(&runtime, "runtime", "r", "", "Runtime of this funtion.Include python3.6,python3.7,python2.7")
 	cmd.Flags().StringVarP(&output, "output-dir", "o", "", "The path where will output the initialized app into.")
@@ -52,15 +52,14 @@ func NewInitCommand() *cobra.Command {
 	return cmd
 }
 
-func initFun(cmd *cobra.Command, args []string) {
+func initFun(cmd *cobra.Command, args []string) error {
 	if runtime == "" {
 		runtime = template.RUNTIME_Python3_6
 	} else {
 		switch runtime {
 		case template.RUNTIME_Python2_7, template.RUNTIME_Python3_6, template.RUNTIME_Python3_7:
 		default:
-			fmt.Printf("%s runtime is not support.\n", runtime)
-			return
+			return fmt.Errorf("%s runtime is not support.\n", runtime)
 		}
 	}
 	if output == "" {
@@ -87,8 +86,8 @@ func initFun(cmd *cobra.Command, args []string) {
 	defer readmeFile.Close()
 	readmeFile.WriteString("")
 
-	if writeRootFile(funPath) != nil {
-		return
+	if err :=writeRootFile(funPath);err != nil {
+		return err
 	}
 
 	templateFile, err := os.Create(filepath.Join(funPath, "template.yaml"))
@@ -118,6 +117,7 @@ func initFun(cmd *cobra.Command, args []string) {
 	} else {
 		templateFile.Write(o)
 	}
+	return nil
 }
 
 func writeRootFile(funPath string) error {

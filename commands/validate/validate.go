@@ -14,54 +14,47 @@ func NewValidateCommand() *cobra.Command {
 		Use:   "validate",
 		Short: "validate template",
 		Long:  "validate template",
-		Run:   runValidate,
+		RunE:   runValidate,
 	}
-	cmd.Flags().StringVarP(&templateFileName, "template-file", "t", "./template.yaml", "The template file.")
+	cmd.Flags().StringVarP(&templateFileName, "template-file", "t", "", "The template file.")
 	return cmd
 }
 
-func runValidate(cmd *cobra.Command, args []string) {
+func runValidate(cmd *cobra.Command, args []string) error{
 	if templateFileName == "" {
-		fmt.Println("please input template file name.")
-		return
+		return fmt.Errorf("please input template file name.")
 	}
 	template, err := template.LoadTemplate(templateFileName)
 	if err != nil {
-		return
+		return err
 	}
 
 	for functionName, tmpl := range template.Resources {
 		if !FunctionNameCheck(functionName) {
-			fmt.Printf("FunctionName(%s) is invalid.", functionName)
-			return
+			return fmt.Errorf("FunctionName(%s) is invalid.", functionName)
 		}
 		if !RuntimeCheck(tmpl.FunctionProperties.Runtime) {
-			fmt.Printf("Runtime(%s) is not support.", tmpl.FunctionProperties.Runtime)
-			return
+			return fmt.Errorf("Runtime(%s) is not support.", tmpl.FunctionProperties.Runtime)
 		}
 		if !HandlerCheck(tmpl.FunctionProperties.Runtime, tmpl.FunctionProperties.Handler) {
-			fmt.Printf("Handler(%s) is not invalid.", tmpl.FunctionProperties.Handler)
-			return
+			return fmt.Errorf("Handler(%s) is not invalid.", tmpl.FunctionProperties.Handler)
 		}
 
 		if !MemoryCheck(tmpl.FunctionProperties.MemorySize) {
-			fmt.Printf("MemorySize(%d) is not support.", tmpl.FunctionProperties.MemorySize)
-			return
+			return fmt.Errorf("MemorySize(%d) is not support.", tmpl.FunctionProperties.MemorySize)
 		}
 		if !OvertimeCheck(tmpl.FunctionProperties.Timeout) {
-			fmt.Printf("Timeout(%d) is not support.", tmpl.FunctionProperties.Timeout)
-			return
+			return fmt.Errorf("Timeout(%d) is not support.", tmpl.FunctionProperties.Timeout)
 		}
 
 		if !EnvCheck(tmpl.FunctionProperties.Env) {
-			fmt.Printf("Env(%v) is invalid.", tmpl.FunctionProperties.Env)
-			return
+			return fmt.Errorf("Env(%v) is invalid.", tmpl.FunctionProperties.Env)
 		}
 
 		if !CodeUriCheck(tmpl.FunctionProperties.CodeUri) {
-			fmt.Printf("CodeUri(%s) is invalid.", tmpl.FunctionProperties.CodeUri)
-			return
+			return fmt.Errorf("CodeUri(%s) is invalid.", tmpl.FunctionProperties.CodeUri)
 		}
 	}
-	fmt.Print("validate success.\n")
+	fmt.Println("validate success.")
+	return nil
 }
