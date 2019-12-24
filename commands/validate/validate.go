@@ -2,8 +2,7 @@ package validate
 
 import (
 	"fmt"
-
-	"github.com/jdcloud-serverless/sca/common"
+	"github.com/jdcloud-serverless/sca/common/template"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +16,7 @@ func NewValidateCommand() *cobra.Command {
 		Long:  "validate template",
 		Run:   runValidate,
 	}
-	cmd.Flags().StringVarP(&templateFileName, "template-file", "t", "", "The template file.")
+	cmd.Flags().StringVarP(&templateFileName, "template-file", "t", "./template.yaml", "The template file.")
 	return cmd
 }
 
@@ -26,7 +25,7 @@ func runValidate(cmd *cobra.Command, args []string) {
 		fmt.Println("please input template file name.")
 		return
 	}
-	template, err := common.LoadTemplate(templateFileName)
+	template, err := template.LoadTemplate(templateFileName)
 	if err != nil {
 		return
 	}

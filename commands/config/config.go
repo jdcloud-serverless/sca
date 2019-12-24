@@ -2,9 +2,8 @@ package config
 
 import (
 	"fmt"
+	"github.com/jdcloud-serverless/sca/common/user"
 	"os"
-
-	"github.com/jdcloud-serverless/sca/common"
 
 	"github.com/spf13/cobra"
 )
@@ -48,7 +47,7 @@ func config(cmd *cobra.Command, args []string) {
 func setConfigFile(accountId, region, access_key, secret_key string) {
 	fileString := fmt.Sprintf(ConfigFileTemplate, accountId, region, access_key, secret_key)
 
-	f, err := os.OpenFile(common.UserInfoPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	f, err := os.OpenFile(user.UserInfoPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
 	} else {
 		// offset

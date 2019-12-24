@@ -2,8 +2,8 @@ package sub_function
 
 import (
 	"fmt"
-
-	"github.com/jdcloud-serverless/sca/common"
+	local_client "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/user"
 
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/client"
@@ -29,8 +29,8 @@ func deleteRun(cmd *cobra.Command, args []string) {
 
 // TODO version and alias for future JSA version
 func delete(functionName, version, alias string) {
-	user := common.GetUser()
-	functionClient := common.NewFunctionClient(user)
+	user := user.GetUser()
+	functionClient := local_client.NewFunctionClient(user)
 
 	if functionName == "" {
 		fmt.Println("Please input correct function name ...")
@@ -58,7 +58,7 @@ func delete(functionName, version, alias string) {
 	//}
 }
 
-func deleteFunction(user *common.User, functionClient *client.FunctionClient) {
+func deleteFunction(user *user.User, functionClient *client.FunctionClient) {
 	deleteFunctionReq := apis.NewDeleteFunctionRequestWithAllParams(user.Region, functionName)
 	deleteFunctionResp, err := functionClient.DeleteFunction(deleteFunctionReq)
 	if err != nil || deleteFunctionResp.Error.Code != 0 {
@@ -70,7 +70,7 @@ func deleteFunction(user *common.User, functionClient *client.FunctionClient) {
 	}
 }
 
-func deleteVersion(user *common.User, functionClient *client.FunctionClient) {
+func deleteVersion(user *user.User, functionClient *client.FunctionClient) {
 	deleteVersionReq := apis.NewDeleteVersionRequestWithAllParams(user.Region, functionName, version)
 	deleteVersionResp, err := functionClient.DeleteVersion(deleteVersionReq)
 	if err != nil || deleteVersionResp.Error.Code != 0 {
@@ -82,7 +82,7 @@ func deleteVersion(user *common.User, functionClient *client.FunctionClient) {
 	}
 }
 
-func deleteAlias(user *common.User, functionClient *client.FunctionClient) {
+func deleteAlias(user *user.User, functionClient *client.FunctionClient) {
 	deleteAliasReq := apis.NewDeleteAliasRequestWithAllParams(user.Region, functionName, alias)
 	deleteAliasResp, err := functionClient.DeleteAlias(deleteAliasReq)
 	if err != nil || deleteAliasResp.Error.Code != 0 {

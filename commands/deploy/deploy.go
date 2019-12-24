@@ -7,7 +7,10 @@ import (
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/client"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/models"
-	"github.com/jdcloud-serverless/sca/common"
+	local_client "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/template"
+	"github.com/jdcloud-serverless/sca/common/user"
+	"github.com/jdcloud-serverless/sca/common/util"
 	"github.com/mholt/archiver"
 	"github.com/spf13/cobra"
 	"io/ioutil"
@@ -31,23 +34,23 @@ func NewDeployCommand() *cobra.Command {
 }
 
 func InitDeployCmdFlags(cmd *cobra.Command) {
-	cmd.Flags().StringVarP(&templatePath, "template", "t", "", "specify template yaml file")
+	cmd.Flags().StringVarP(&templatePath, "template", "t", "./template.yaml", "specify template yaml file")
 }
 
 func deploy(cmd *cobra.Command, args []string) {
 	// get template
 
-	template, err := common.LoadTemplate(templatePath)
+	template, err := template.LoadTemplate(templatePath)
 	if err != nil {
 		return
 	}
 
 	// get user info
-	user := common.GetUser()
+	user := user.GetUser()
 
 	for functionName, v := range template.Resources {
 		// create function sdk client
-		functionClient := common.NewFunctionClient(user)
+		functionClient := local_client.NewFunctionClient(user)
 
 		// if function not exists , execute create function
 		// if exists , execute update function
@@ -72,7 +75,7 @@ func checkFunctionExist(region, functionName string, functionClient *client.Func
 	return true
 }
 
-func createFunction(functionName, region string, function *common.FunctionProperties, functionClient *client.FunctionClient) {
+func createFunction(functionName, region string, function *template.FunctionProperties, functionClient *client.FunctionClient) {
 	createFunctionReq := apis.NewCreateFunctionRequestWithoutParam()
 	createFunctionReq.SetRegionId(region)
 	createFunctionReq.SetName(functionName)
@@ -99,11 +102,11 @@ func createFunction(functionName, region string, function *common.FunctionProper
 		return
 	}
 
-	common.TableFunctionModel(createFunctionResp.Result.Data)
+	util.TableFunctionModel(createFunctionResp.Result.Data)
 	fmt.Printf("Deploy function (%s) success .\n", functionName)
 }
 
-func updateFunction(functionName, region string, function *common.FunctionProperties, functionClient *client.FunctionClient) {
+func updateFunction(functionName, region string, function *template.FunctionProperties, functionClient *client.FunctionClient) {
 	updateFunctionReq := apis.NewUpdateFunctionRequestWithoutParam()
 	updateFunctionReq.SetRegionId((region))
 	updateFunctionReq.SetFunctionName(functionName)
@@ -130,7 +133,7 @@ func updateFunction(functionName, region string, function *common.FunctionProper
 		return
 	}
 
-	common.TableFunctionModel(updateFunctionResp.Result.Data)
+	util.TableFunctionModel(updateFunctionResp.Result.Data)
 	fmt.Printf("Deploy function (%s) success .\n", functionName)
 }
 

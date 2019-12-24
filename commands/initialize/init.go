@@ -2,10 +2,9 @@ package initialize
 
 import (
 	"fmt"
+	"github.com/jdcloud-serverless/sca/common/template"
 	"os"
 	"path/filepath"
-
-	"github.com/jdcloud-serverless/sca/common"
 
 	"github.com/spf13/cobra"
 )
@@ -55,10 +54,10 @@ func NewInitCommand() *cobra.Command {
 
 func initFun(cmd *cobra.Command, args []string) {
 	if runtime == "" {
-		runtime = common.RUNTIME_Python3_6
+		runtime = template.RUNTIME_Python3_6
 	} else {
 		switch runtime {
-		case common.RUNTIME_Python2_7, common.RUNTIME_Python3_6, common.RUNTIME_Python3_7:
+		case template.RUNTIME_Python2_7, template.RUNTIME_Python3_6, template.RUNTIME_Python3_7:
 		default:
 			fmt.Printf("%s runtime is not support.\n", runtime)
 			return
@@ -73,7 +72,7 @@ func initFun(cmd *cobra.Command, args []string) {
 		}
 	}
 	if projectName == "" {
-		projectName = common.DefaultProjectName
+		projectName = template.DefaultProjectName
 	}
 
 	funPath := fmt.Sprintf("%s/%s", output, projectName)
@@ -97,24 +96,24 @@ func initFun(cmd *cobra.Command, args []string) {
 		fmt.Printf("create template.yaml err=%s\n", err.Error())
 	}
 	defer templateFile.Close()
-	tmpl := common.Template{
-		ROSTemplateFormatVersion: common.DefaultROSTemplateFormatVersion,
-		Transform:                common.DefaultTransform,
-		Resources:                map[string]*common.FunctionTemplate{},
+	tmpl := template.Template{
+		ROSTemplateFormatVersion: template.DefaultROSTemplateFormatVersion,
+		Transform:                template.DefaultTransform,
+		Resources:                map[string]*template.FunctionTemplate{},
 	}
-	tmpl.Resources[common.DefaultFunctionName] = &common.FunctionTemplate{
-		Type: common.DefaultFunctionType,
-		FunctionProperties: common.FunctionProperties{
+	tmpl.Resources[template.DefaultFunctionName] = &template.FunctionTemplate{
+		Type: template.DefaultFunctionType,
+		FunctionProperties: template.FunctionProperties{
 			Handler:     "index.handler",
 			Timeout:     300,
 			MemorySize:  128,
 			Runtime:     runtime,
-			Description: fmt.Sprintf("This is a template of function which name is \"%s\"", common.DefaultFunctionName),
+			Description: fmt.Sprintf("This is a template of function which name is \"%s\"", template.DefaultFunctionName),
 			CodeUri:     "./",
 		},
 	}
 	writeTemplate(tmpl.Resources[projectName])
-	if o, err := common.Marshal(&tmpl); err != nil {
+	if o, err := template.Marshal(&tmpl); err != nil {
 		fmt.Printf("marsharl template.yaml err=%s\n", err.Error())
 	} else {
 		templateFile.Write(o)
@@ -123,7 +122,7 @@ func initFun(cmd *cobra.Command, args []string) {
 
 func writeRootFile(funPath string) error {
 	switch runtime {
-	case common.RUNTIME_Python2_7, common.RUNTIME_Python3_6, common.RUNTIME_Python3_7:
+	case template.RUNTIME_Python2_7, template.RUNTIME_Python3_6, template.RUNTIME_Python3_7:
 		return writeRootFile_python(funPath, runtime)
 	default:
 		return fmt.Errorf("%s runtime is not support.", runtime)
@@ -141,15 +140,15 @@ func writeRootFile_python(funPath, runtime string) error {
 	return nil
 }
 
-func writeTemplate(tmpl *common.FunctionTemplate) {
+func writeTemplate(tmpl *template.FunctionTemplate) {
 	switch runtime {
-	case common.RUNTIME_Python2_7, common.RUNTIME_Python3_6, common.RUNTIME_Python3_7:
+	case template.RUNTIME_Python2_7, template.RUNTIME_Python3_6, template.RUNTIME_Python3_7:
 		writeTemplate_python(tmpl)
 	default:
 
 	}
 }
 
-func writeTemplate_python(tmpl *common.FunctionTemplate) {
+func writeTemplate_python(tmpl *template.FunctionTemplate) {
 
 }

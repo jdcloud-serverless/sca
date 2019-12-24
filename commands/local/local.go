@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	local_client "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/template"
+	"github.com/jdcloud-serverless/sca/common/util"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
-
-	"github.com/jdcloud-serverless/sca/common"
 
 	"github.com/spf13/cobra"
 )
@@ -54,12 +55,12 @@ func ExecLocalCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	template, err := common.LoadTemplate(tFile)
+	template, err := template.LoadTemplate(tFile)
 	if err != nil {
 		return err
 	}
 
-	event, err := common.ReadFile(eFile)
+	event, err := util.ReadFile(eFile)
 	if err != nil {
 		return err
 	}
@@ -109,7 +110,7 @@ type LocalFunctionResponseMessage struct {
 	Duration   string `json:"time_used"`
 }
 
-func Execute(functionName string, properties common.FunctionProperties, event []byte) *LocalFunctionResponseMessage {
+func Execute(functionName string, properties template.FunctionProperties, event []byte) *LocalFunctionResponseMessage {
 	res := new(LocalFunctionResponseMessage)
 
 	requestId := fmt.Sprintf("%s-%d", "csa-requestid", time.Now().Unix())
@@ -135,7 +136,7 @@ func Execute(functionName string, properties common.FunctionProperties, event []
 		res.Code = InternalErrorCode
 		return res
 	}
-	wsgiClient := common.NewHttpClient()
+	wsgiClient := local_client.NewHttpClient()
 	httpRsp, err := wsgiClient.Forward(WsgiUrl, http.MethodPost, bytes.NewReader(postData), header)
 	if err != nil {
 		res.Stderr = err.Error()
@@ -181,11 +182,11 @@ func Execute(functionName string, properties common.FunctionProperties, event []
 func convertRuntime(runtime string) string {
 	localRuntime := ""
 	switch runtime {
-	case common.RUNTIME_Python2_7:
+	case template.RUNTIME_Python2_7:
 		localRuntime = RUNTIME_Python27
-	case common.RUNTIME_Python3_6:
+	case template.RUNTIME_Python3_6:
 		localRuntime = RUNTIME_Python36
-	case common.RUNTIME_Python3_7:
+	case template.RUNTIME_Python3_7:
 		localRuntime = RUNTIME_Python37
 	}
 

@@ -2,16 +2,15 @@ package local
 
 import (
 	"fmt"
+	"github.com/jdcloud-serverless/sca/common/template"
 	"testing"
-
-	"github.com/jdcloud-serverless/sca/common"
 )
 
 func TestExecute(t *testing.T) {
 	envs := make(map[string]string)
 	envs["key1"] = "value1"
 
-	properties := common.FunctionProperties{
+	properties := template.FunctionProperties{
 		Name:        "test-function",
 		Handler:     "index.handler",
 		Timeout:     100,

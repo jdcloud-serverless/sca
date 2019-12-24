@@ -1,11 +1,10 @@
 package validate
 
 import (
+	"github.com/jdcloud-serverless/sca/common/template"
 	"os"
 	"regexp"
 	"strings"
-
-	"github.com/jdcloud-serverless/sca/common"
 )
 
 const (
@@ -15,7 +14,7 @@ const (
 
 func RuntimeCheck(runtime string) bool {
 	switch runtime {
-	case common.RUNTIME_Python2_7, common.RUNTIME_Python3_6, common.RUNTIME_Python3_7:
+	case template.RUNTIME_Python2_7, template.RUNTIME_Python3_6, template.RUNTIME_Python3_7:
 		return true
 	default:
 		return false

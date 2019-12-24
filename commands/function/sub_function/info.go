@@ -2,8 +2,9 @@ package sub_function
 
 import (
 	"fmt"
-
-	"github.com/jdcloud-serverless/sca/common"
+	client2 "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/user"
+	"github.com/jdcloud-serverless/sca/common/util"
 
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/client"
@@ -30,8 +31,8 @@ func infoRun(cmd *cobra.Command, args []string) {
 
 // TODO version and alias for future JSA version
 func info(functionName, version, alias string) {
-	user := common.GetUser()
-	functionClient := common.NewFunctionClient(user)
+	user := user.GetUser()
+	functionClient := client2.NewFunctionClient(user)
 
 	if functionName == "" {
 		fmt.Println("Please input correct function name ...")
@@ -60,7 +61,7 @@ func info(functionName, version, alias string) {
 
 }
 
-func infoFunction(user *common.User, functionClient *client.FunctionClient) {
+func infoFunction(user *user.User, functionClient *client.FunctionClient) {
 	getFunctionReq := apis.NewGetFunctionRequestWithAllParams(user.Region, functionName)
 	getFunctionResp, err := functionClient.GetFunction(getFunctionReq)
 	if err != nil || getFunctionResp.Error.Code != 0 {
@@ -72,10 +73,10 @@ func infoFunction(user *common.User, functionClient *client.FunctionClient) {
 		return
 	}
 
-	common.TableFunctionModel(getFunctionResp.Result.Data)
+	util.TableFunctionModel(getFunctionResp.Result.Data)
 }
 
-func infoVersion(user *common.User, functionClient *client.FunctionClient) {
+func infoVersion(user *user.User, functionClient *client.FunctionClient) {
 	getVersionReq := apis.NewGetVersionRequest(user.Region, functionName, version)
 	getVersionResp, err := functionClient.GetVersion(getVersionReq)
 	if err != nil || getVersionResp.Error.Code != 0 {
@@ -87,7 +88,7 @@ func infoVersion(user *common.User, functionClient *client.FunctionClient) {
 	}
 }
 
-func infoAlias(user *common.User, functionClient *client.FunctionClient) {
+func infoAlias(user *user.User, functionClient *client.FunctionClient) {
 	getAliasReq := apis.NewGetAliasRequestWithAllParams(user.Region, functionName, alias)
 	getAliasResp, err := functionClient.GetAlias(getAliasReq)
 	if err != nil || getAliasResp.Error.Code != 0 {

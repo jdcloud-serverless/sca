@@ -1,12 +1,11 @@
 package invoke
 
 import (
-	"errors"
 	"fmt"
+	local_client "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/user"
 	"io/ioutil"
 	"os"
-
-	"github.com/jdcloud-serverless/sca/common"
 
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/client"
@@ -40,7 +39,7 @@ func InitInvokeCmdFlags(cmd *cobra.Command) {
 	cmd.Flags().StringVarP(&functionName, "name", "n", "", "specify function name to invoke")
 	//cmd.Flags().StringVarP(&version, "version", "v", "", "specify function version to invoke")
 	//cmd.Flags().StringVarP(&alias, "alias", "a", "", "specify function alias to invoke")
-	cmd.Flags().StringVarP(&eventFile, "event", "e", "", "specify event file path to invoke")
+	cmd.Flags().StringVarP(&eventFile, "event", "e", "", `specify event file path to invoke, if not specified, use event {"key":"value"}`)
 	//cmd.Flags().BoolVarP(&async, "async", "a", false, "specify invoke method to async")
 }
 
@@ -49,13 +48,19 @@ func invoke(cmd *cobra.Command, args []string) {
 		fmt.Println("Invoke Error : Please input correct function name")
 	}
 
-	user := common.GetUser()
-	functionClient := common.NewFunctionClient(user)
+	user := user.GetUser()
+	functionClient := local_client.NewFunctionClient(user)
 
-	eventStr, err := readEventFile(eventFile)
-	if err != nil {
-		fmt.Println("read event file err=",err)
-		return
+	eventStr := ""
+	if eventFile == ""{
+		eventStr = `{"key":"value"}`
+	} else {
+		var err error = nil
+		eventStr, err = readEventFile(eventFile)
+		if err != nil {
+			fmt.Println("read event file err=",err)
+			return
+		}
 	}
 
 	if async {
@@ -67,9 +72,6 @@ func invoke(cmd *cobra.Command, args []string) {
 
 func readEventFile(eventFile string) (string, error) {
 	var realPath string
-	if len(eventFile) == 0 {
-		return "", errors.New("[Error] Code Uri is empty ...")
-	}
 	if eventFile[0] == '.' {
 		curDir, _ := os.Getwd()
 		realPath = curDir + eventFile[1:]
@@ -81,7 +83,7 @@ func readEventFile(eventFile string) (string, error) {
 	return string(eventByte), nil
 }
 
-func syncInvokeFunction(user *common.User, client *client.FunctionClient, eventStr string) {
+func syncInvokeFunction(user *user.User, client *client.FunctionClient, eventStr string) {
 	invokeReq := apis.NewInvokeRequestWithAllParams(user.Region, functionName, FunctionLatestVersion, eventStr)
 	invokeResp, err := client.Invoke(invokeReq)
 	if err != nil || invokeResp.Error.Code != 0 {
@@ -97,7 +99,7 @@ func syncInvokeFunction(user *common.User, client *client.FunctionClient, eventS
 	fmt.Printf(InvokeResultFormat, invokeResp.RequestID, invokeResp.Result.Data.BillingTime, invokeResp.Result.Data.SetupMem, invokeResp.Result.Data.RealMem)
 }
 
-func asyncInvokeFunction(user *common.User, client *client.FunctionClient, eventStr string) {
+func asyncInvokeFunction(user *user.User, client *client.FunctionClient, eventStr string) {
 	asyncInvokeReq := apis.NewAsyncInvokeRequestWithAllParams(user.Region, functionName, FunctionLatestVersion, eventStr)
 	asyncInvokeResp, err := client.AsyncInvoke(asyncInvokeReq)
 	if err != nil || asyncInvokeResp.Error.Code == 0 {

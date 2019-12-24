@@ -3,8 +3,8 @@ package logs
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/jdcloud-serverless/sca/common"
+	local_client "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/user"
 
 	functionApis "github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	logsApis "github.com/jdcloud-api/jdcloud-sdk-go/services/logs/apis"
@@ -38,7 +38,7 @@ func runLogs(cmd *cobra.Command, args []string) {
 		return
 	}
 	// get user info
-	user := common.GetUser()
+	user := user.GetUser()
 	if logSetId, logTopicId, err := getFunction(user, functionName); err == nil {
 		if logSetId == "" || logTopicId == ""{
 			fmt.Println("you have not set logset.")
@@ -48,9 +48,9 @@ func runLogs(cmd *cobra.Command, args []string) {
 	}
 }
 
-func getFunction(user *common.User, functionName string) (logSetId, logTopicId string, err error) {
+func getFunction(user *user.User, functionName string) (logSetId, logTopicId string, err error) {
 	req := functionApis.NewGetFunctionRequestWithAllParams(user.Region, functionName)
-	resp, err := common.NewFunctionClient(user).GetFunction(req)
+	resp, err := local_client.NewFunctionClient(user).GetFunction(req)
 	if err != nil || resp.Error.Code != 0 {
 		if err != nil {
 			fmt.Printf("Get function (%s) error : %s \n", functionName, err.Error())
@@ -70,9 +70,9 @@ type FunctionContent struct {
 	Message      string `json:"message"`
 }
 
-func findLog(user *common.User, logSetId, logTopicId string) {
+func findLog(user *user.User, logSetId, logTopicId string) {
 	// https://docs.jdcloud.com/cn/log-service/api/search?content=API
-	client := common.NewLogClient(user)
+	client := local_client.NewLogClient(user)
 	req := logsApis.NewSearchRequest(user.Region, logSetId, logTopicId, "fulltext")
 
 	var err error

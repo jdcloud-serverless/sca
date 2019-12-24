@@ -3,9 +3,9 @@ package sub_function
 import (
 	"errors"
 	"fmt"
+	client2 "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/user"
 	"os"
-
-	"github.com/jdcloud-serverless/sca/common"
 
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/apis"
 	"github.com/jdcloud-api/jdcloud-sdk-go/services/function/client"
@@ -26,8 +26,8 @@ func NewFunctionListCommand() *cobra.Command {
 }
 
 func list() {
-	user := common.GetUser()
-	client := common.NewFunctionClient(user)
+	user := user.GetUser()
+	client := client2.NewFunctionClient(user)
 
 	listResp, err := listFunction(user, client)
 	if err != nil {
@@ -43,7 +43,7 @@ func list() {
 	table.Render()
 }
 
-func listFunction(user *common.User, client *client.FunctionClient) (*apis.ListFunctionResponse, error) {
+func listFunction(user *user.User, client *client.FunctionClient) (*apis.ListFunctionResponse, error) {
 	listReq := apis.NewListFunctionRequestWithoutParam()
 	listReq.SetRegionId(user.Region)
 	listReq.SetListAll(true)

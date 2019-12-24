@@ -1,4 +1,4 @@
-package common
+package user
 
 import (
 	"bufio"

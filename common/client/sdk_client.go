@@ -1,9 +1,10 @@
-package common
+package client
 
 import (
 	"github.com/jdcloud-api/jdcloud-sdk-go/core"
 	functionClient "github.com/jdcloud-api/jdcloud-sdk-go/services/function/client"
 	logsClient "github.com/jdcloud-api/jdcloud-sdk-go/services/logs/client"
+	"github.com/jdcloud-serverless/sca/common/user"
 )
 
 type NoLogger struct{}
@@ -14,7 +15,7 @@ func NewNoLogger() *NoLogger {
 
 func (logger NoLogger) Log(level int, message ...interface{}) {}
 
-func NewFunctionClient(user *User) *functionClient.FunctionClient {
+func NewFunctionClient(user *user.User) *functionClient.FunctionClient {
 	credential := core.NewCredentials(user.AccessKey, user.SecretKey)
 	config := core.NewConfig()
 	config.SetScheme(core.SchemeHttp)
@@ -24,7 +25,7 @@ func NewFunctionClient(user *User) *functionClient.FunctionClient {
 	return functionClient
 }
 
-func NewLogClient(user *User) *logsClient.LogsClient {
+func NewLogClient(user *user.User) *logsClient.LogsClient {
 	credential := core.NewCredentials(user.AccessKey, user.SecretKey)
 	config := core.NewConfig()
 	config.SetScheme(core.SchemeHttp)
