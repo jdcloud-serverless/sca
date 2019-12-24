@@ -19,12 +19,12 @@ func NewConfigCommand() *cobra.Command {
 		Use:   "config",
 		Short: "config user credential info",
 		Long:  "config user credential info",
-		Run:   config,
+		RunE:   config,
 	}
 	return cmd
 }
 
-func config(cmd *cobra.Command, args []string) {
+func config(cmd *cobra.Command, args []string) error {
 	fmt.Print("[>] JDCould accountid = ")
 	var accountId string
 	fmt.Scan(&accountId)
@@ -41,10 +41,10 @@ func config(cmd *cobra.Command, args []string) {
 	var secret_key string
 	fmt.Scan(&secret_key)
 
-	setConfigFile(accountId, region, access_key, secret_key)
+	return setConfigFile(accountId, region, access_key, secret_key)
 }
 
-func setConfigFile(accountId, region, access_key, secret_key string) {
+func setConfigFile(accountId, region, access_key, secret_key string) error {
 	fileString := fmt.Sprintf(ConfigFileTemplate, accountId, region, access_key, secret_key)
 
 	f, err := os.OpenFile(user.UserInfoPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
@@ -55,5 +55,7 @@ func setConfigFile(accountId, region, access_key, secret_key string) {
 		n, _ := f.Seek(0, os.SEEK_END)
 		_, err = f.WriteAt([]byte(fileString), n)
 		defer f.Close()
+		return err
 	}
+	return nil
 }

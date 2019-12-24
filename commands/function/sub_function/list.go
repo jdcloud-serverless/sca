@@ -18,20 +18,18 @@ func NewFunctionListCommand() *cobra.Command {
 		Use:   "list",
 		Short: "get list of functions in cloud",
 		Long:  "get list of functions in cloud",
-		Run: func(cmd *cobra.Command, args []string) {
-			list()
-		},
+		RunE: list,
 	}
 	return cmd
 }
 
-func list() {
+func list(cmd *cobra.Command, args []string) error{
 	user := user.GetUser()
 	client := client2.NewFunctionClient(user)
 
 	listResp, err := listFunction(user, client)
 	if err != nil {
-		return
+		return err
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
@@ -41,6 +39,7 @@ func list() {
 		table.Append(row)
 	}
 	table.Render()
+	return nil
 }
 
 func listFunction(user *user.User, client *client.FunctionClient) (*apis.ListFunctionResponse, error) {

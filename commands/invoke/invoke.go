@@ -29,7 +29,7 @@ func NewInvokeCommand() *cobra.Command {
 		Use:   "invoke",
 		Short: "invoke function in cloud",
 		Long:  "invoke function in cloud",
-		Run:   invoke,
+		RunE:   invoke,
 	}
 	InitInvokeCmdFlags(cmd)
 	return cmd
@@ -43,7 +43,7 @@ func InitInvokeCmdFlags(cmd *cobra.Command) {
 	//cmd.Flags().BoolVarP(&async, "async", "a", false, "specify invoke method to async")
 }
 
-func invoke(cmd *cobra.Command, args []string) {
+func invoke(cmd *cobra.Command, args []string) error {
 	if functionName == "" {
 		fmt.Println("Invoke Error : Please input correct function name")
 	}
@@ -58,15 +58,14 @@ func invoke(cmd *cobra.Command, args []string) {
 		var err error = nil
 		eventStr, err = readEventFile(eventFile)
 		if err != nil {
-			fmt.Println("read event file err=",err)
-			return
+			return fmt.Errorf("read event file err=",err)
 		}
 	}
 
 	if async {
-		asyncInvokeFunction(user, functionClient, eventStr)
+		return asyncInvokeFunction(user, functionClient, eventStr)
 	} else {
-		syncInvokeFunction(user, functionClient, eventStr)
+		return syncInvokeFunction(user, functionClient, eventStr)
 	}
 }
 
@@ -83,31 +82,31 @@ func readEventFile(eventFile string) (string, error) {
 	return string(eventByte), nil
 }
 
-func syncInvokeFunction(user *user.User, client *client.FunctionClient, eventStr string) {
+func syncInvokeFunction(user *user.User, client *client.FunctionClient, eventStr string) error {
 	invokeReq := apis.NewInvokeRequestWithAllParams(user.Region, functionName, FunctionLatestVersion, eventStr)
 	invokeResp, err := client.Invoke(invokeReq)
 	if err != nil || invokeResp.Error.Code != 0 {
 		if err == nil {
-			fmt.Printf("Invoke function (%s) error : \n %s\n", functionName, invokeResp.Error.Message)
+			return fmt.Errorf("Invoke function (%s) error : \n %s\n", functionName, invokeResp.Error.Message)
 		} else {
-			fmt.Printf("Invoke function (%s) error : \n %s\n", functionName, err.Error())
+			return fmt.Errorf("Invoke function (%s) error : \n %s\n", functionName, err.Error())
 		}
-		return
 	}
 	fmt.Println(invokeResp.Result.Data.LogStr)
 	fmt.Printf(InvokeReturnFormat, invokeResp.Result.Data.Result)
 	fmt.Printf(InvokeResultFormat, invokeResp.RequestID, invokeResp.Result.Data.BillingTime, invokeResp.Result.Data.SetupMem, invokeResp.Result.Data.RealMem)
+	return nil
 }
 
-func asyncInvokeFunction(user *user.User, client *client.FunctionClient, eventStr string) {
+func asyncInvokeFunction(user *user.User, client *client.FunctionClient, eventStr string)  error{
 	asyncInvokeReq := apis.NewAsyncInvokeRequestWithAllParams(user.Region, functionName, FunctionLatestVersion, eventStr)
 	asyncInvokeResp, err := client.AsyncInvoke(asyncInvokeReq)
 	if err != nil || asyncInvokeResp.Error.Code == 0 {
 		if err == nil {
-			fmt.Printf("Invoke function (%s) error : \n %s\n", functionName, asyncInvokeResp.Error.Message)
+			return fmt.Errorf("Invoke function (%s) error : \n %s\n", functionName, asyncInvokeResp.Error.Message)
 		} else {
-			fmt.Printf("Invoke function (%s) error : \n %s\n", functionName, err.Error())
+			return fmt.Errorf("Invoke function (%s) error : \n %s\n", functionName, err.Error())
 		}
-		return
 	}
+	return nil
 }

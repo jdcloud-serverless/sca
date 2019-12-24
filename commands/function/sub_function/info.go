@@ -16,7 +16,7 @@ func NewFunctionInfoCommand() *cobra.Command {
 		Use:   "info",
 		Short: "get function info in cloud",
 		Long:  "get function info in cloud",
-		Run:   infoRun,
+		RunE:   infoRun,
 	}
 
 	cmd.Flags().StringVarP(&functionName, "name", "n", "", "name of this funtion")
@@ -25,21 +25,20 @@ func NewFunctionInfoCommand() *cobra.Command {
 	return cmd
 }
 
-func infoRun(cmd *cobra.Command, args []string) {
-	info(functionName, version, alias)
+func infoRun(cmd *cobra.Command, args []string)error {
+	return info(functionName, version, alias)
 }
 
 // TODO version and alias for future JSA version
-func info(functionName, version, alias string) {
+func info(functionName, version, alias string) error{
 	user := user.GetUser()
 	functionClient := client2.NewFunctionClient(user)
 
 	if functionName == "" {
-		fmt.Println("Please input correct function name ...")
-		return
+		return fmt.Errorf("Please input correct function name ...")
 	}
 
-	infoFunction(user, functionClient)
+	return infoFunction(user, functionClient)
 
 	//if version == "" {
 	//	if alias == "" {
@@ -61,41 +60,43 @@ func info(functionName, version, alias string) {
 
 }
 
-func infoFunction(user *user.User, functionClient *client.FunctionClient) {
+func infoFunction(user *user.User, functionClient *client.FunctionClient) error{
 	getFunctionReq := apis.NewGetFunctionRequestWithAllParams(user.Region, functionName)
 	getFunctionResp, err := functionClient.GetFunction(getFunctionReq)
 	if err != nil || getFunctionResp.Error.Code != 0 {
 		if err != nil {
-			fmt.Printf("Get function (%s) error : %s \n", functionName, err.Error())
+			return fmt.Errorf("Get function (%s) error : %s \n", functionName, err.Error())
 		} else {
-			fmt.Printf("Get function (%s) error : %s \n", functionName, getFunctionResp.Error.Message)
+			return fmt.Errorf("Get function (%s) error : %s \n", functionName, getFunctionResp.Error.Message)
 		}
-		return
 	}
-
 	util.TableFunctionModel(getFunctionResp.Result.Data)
+	return nil
 }
 
-func infoVersion(user *user.User, functionClient *client.FunctionClient) {
+func infoVersion(user *user.User, functionClient *client.FunctionClient) error {
 	getVersionReq := apis.NewGetVersionRequest(user.Region, functionName, version)
 	getVersionResp, err := functionClient.GetVersion(getVersionReq)
 	if err != nil || getVersionResp.Error.Code != 0 {
 		if err != nil {
-			fmt.Printf("Get function (%s) version (%s) error : %s \n", functionName, version, err.Error())
+			return fmt.Errorf("Get function (%s) version (%s) error : %s \n", functionName, version, err.Error())
 		} else {
-			fmt.Printf("Get function (%s) version (%s) error : %s \n", functionName, version, getVersionResp.Error.Message)
+			return fmt.Errorf("Get function (%s) version (%s) error : %s \n", functionName, version, getVersionResp.Error.Message)
 		}
 	}
+	util.TableFunctionModel(getVersionResp.Result.Data)
+	return nil
 }
 
-func infoAlias(user *user.User, functionClient *client.FunctionClient) {
+func infoAlias(user *user.User, functionClient *client.FunctionClient)error {
 	getAliasReq := apis.NewGetAliasRequestWithAllParams(user.Region, functionName, alias)
 	getAliasResp, err := functionClient.GetAlias(getAliasReq)
 	if err != nil || getAliasResp.Error.Code != 0 {
 		if err != nil {
-			fmt.Printf("Get function (%s) alias (%s) error : %s \n", functionName, alias, err.Error())
+			return fmt.Errorf("Get function (%s) alias (%s) error : %s \n", functionName, alias, err.Error())
 		} else {
-			fmt.Printf("Get function (%s) alias (%s) error : %s \n", functionName, alias, getAliasResp.Error.Message)
+			return fmt.Errorf("Get function (%s) alias (%s) error : %s \n", functionName, alias, getAliasResp.Error.Message)
 		}
 	}
+	return nil
 }

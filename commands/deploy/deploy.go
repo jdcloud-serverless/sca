@@ -27,7 +27,7 @@ func NewDeployCommand() *cobra.Command {
 		Use:   "deploy",
 		Short: "deploy functions in template to cloud",
 		Long:  "deploy functions in template to cloud",
-		Run:   deploy,
+		RunE:   deploy,
 	}
 	InitDeployCmdFlags(cmd)
 	return cmd
@@ -37,12 +37,12 @@ func InitDeployCmdFlags(cmd *cobra.Command) {
 	cmd.Flags().StringVarP(&templatePath, "template", "t", "./template.yaml", "specify template yaml file")
 }
 
-func deploy(cmd *cobra.Command, args []string) {
+func deploy(cmd *cobra.Command, args []string) error{
 	// get template
 
 	template, err := template.LoadTemplate(templatePath)
 	if err != nil {
-		return
+		return err
 	}
 
 	// get user info
@@ -56,13 +56,13 @@ func deploy(cmd *cobra.Command, args []string) {
 		// if exists , execute update function
 		if exist := checkFunctionExist(user.Region, functionName, functionClient); !exist {
 			fmt.Printf("Function (%s) not exists , now beginning to create function\n", functionName)
-			createFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
+			return createFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
 		} else {
 			fmt.Printf("Function (%s) exists , now beginning to update function\n", functionName)
-			updateFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
+			return updateFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
 		}
 	}
-
+	return nil
 }
 
 func checkFunctionExist(region, functionName string, functionClient *client.FunctionClient) bool {
@@ -75,7 +75,7 @@ func checkFunctionExist(region, functionName string, functionClient *client.Func
 	return true
 }
 
-func createFunction(functionName, region string, function *template.FunctionProperties, functionClient *client.FunctionClient) {
+func createFunction(functionName, region string, function *template.FunctionProperties, functionClient *client.FunctionClient) error {
 	createFunctionReq := apis.NewCreateFunctionRequestWithoutParam()
 	createFunctionReq.SetRegionId(region)
 	createFunctionReq.SetName(functionName)
@@ -87,26 +87,25 @@ func createFunction(functionName, region string, function *template.FunctionProp
 	createFunctionReq.SetRunTime(function.Runtime)
 	codeReq, err := getCodeRequestByCodeUri(function.CodeUri)
 	if err != nil {
-		fmt.Printf("Deploy function (%s) error !\n", functionName)
-		return
+		return fmt.Errorf("Deploy function (%s) error !\n", functionName)
 	}
 	createFunctionReq.SetCode(codeReq)
 
 	createFunctionResp, err := functionClient.CreateFunction(createFunctionReq)
 	if err != nil || createFunctionResp.Error.Code != 0 {
 		if err == nil {
-			fmt.Printf("Deploy function (%s) error : \n %s\n", functionName, createFunctionResp.Error.Message)
+			return fmt.Errorf("Deploy function (%s) error : \n %s\n", functionName, createFunctionResp.Error.Message)
 		} else {
-			fmt.Printf("Deploy function (%s) error : \n %s\n", functionName, err.Error())
+			return fmt.Errorf("Deploy function (%s) error : \n %s\n", functionName, err.Error())
 		}
-		return
 	}
 
 	util.TableFunctionModel(createFunctionResp.Result.Data)
 	fmt.Printf("Deploy function (%s) success .\n", functionName)
+	return nil
 }
 
-func updateFunction(functionName, region string, function *template.FunctionProperties, functionClient *client.FunctionClient) {
+func updateFunction(functionName, region string, function *template.FunctionProperties, functionClient *client.FunctionClient) error {
 	updateFunctionReq := apis.NewUpdateFunctionRequestWithoutParam()
 	updateFunctionReq.SetRegionId((region))
 	updateFunctionReq.SetFunctionName(functionName)
@@ -118,23 +117,22 @@ func updateFunction(functionName, region string, function *template.FunctionProp
 	updateFunctionReq.SetMemory(function.MemorySize)
 	codeReq, err := getCodeRequestByCodeUri(function.CodeUri)
 	if err != nil {
-		fmt.Printf("Deploy function (%s) error !\n%s\n", functionName, err.Error())
-		return
+		return fmt.Errorf("Deploy function (%s) error !\n%s\n", functionName, err.Error())
 	}
 	updateFunctionReq.SetCode(codeReq)
 
 	updateFunctionResp, err := functionClient.UpdateFunction(updateFunctionReq)
 	if err != nil || updateFunctionResp.Error.Code != 0 {
 		if err == nil {
-			fmt.Printf("Deploy function (%s) error : \n %s\n", functionName, updateFunctionResp.Error.Message)
+			return fmt.Errorf("Deploy function (%s) error : \n %s\n", functionName, updateFunctionResp.Error.Message)
 		} else {
-			fmt.Printf("Deploy function (%s) error : \n %s\n", functionName, err.Error())
+			return fmt.Errorf("Deploy function (%s) error : \n %s\n", functionName, err.Error())
 		}
-		return
 	}
 
 	util.TableFunctionModel(updateFunctionResp.Result.Data)
 	fmt.Printf("Deploy function (%s) success .\n", functionName)
+	return nil
 }
 
 func getCodeRequestByCodeUri(codeUri string) (*models.Code, error) {
