@@ -28,14 +28,14 @@ def handler(event,context):
     return "hello world"
 
 # cat mysca/testproject/template.yaml
-ROSTemplateFormatVersion: "2015-09-01"
-Transform: JDCloud::Serverless-2019-11-10
+ROSTemplateFormatVersion: "2019-12-25"
+Transform: JDCloud::Serverless-2019-12-25
 Resources:
   test-function:
     Type: JDCloud::Serverless::Function
     Properties:
       Handler: index.handler
-      Timeout: 3
+      Timeout: 300
       MemorySize: 128
       Runtime: python3.6
       Description: This is a template of function which name is "test-function"
@@ -49,6 +49,4 @@ Resources:
       LogConfig:
         LogSet: ""
         LogTopic: ""
-      Events: []
-
 ```
