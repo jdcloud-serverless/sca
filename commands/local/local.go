@@ -39,7 +39,7 @@ func InitLocalCmdFlags(cmd *cobra.Command) {
 	cmd.Flags().StringP("name", "n", "", "specify local invoke function name")
 	cmd.Flags().StringP("template", "t", "./template.yaml", "specify template yaml file")
 	cmd.Flags().StringP("event", "e", "{}", "specify event json file")
-	cmd.Flags().Bool("skip-pull-image", false, "specify skip pulling or update docker images")
+	cmd.Flags().Bool("skip-pull-image", false, "skip pull or update docker images")
 }
 
 func ExecLocalCommand(cmd *cobra.Command, args []string) error {
