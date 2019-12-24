@@ -106,7 +106,7 @@ func initFun(cmd *cobra.Command, args []string) {
 		Type: common.DefaultFunctionType,
 		FunctionProperties: common.FunctionProperties{
 			Handler:     "index.handler",
-			Timeout:     3,
+			Timeout:     300,
 			MemorySize:  128,
 			Runtime:     runtime,
 			Description: fmt.Sprintf("This is a template of function which name is \"%s\"", common.DefaultFunctionName),
