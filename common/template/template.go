@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	DefaultROSTemplateFormatVersion = "2015-09-01"
-	DefaultTransform                = "JDCloud::Serverless-2019-11-10"
+	DefaultROSTemplateFormatVersion = "2019-12-25"
+	DefaultTransform                = "JDCloud::Serverless-2019-12-25"
 	DefaultFunctionType             = "JDCloud::Serverless::Function"
 
 	DefaultFunctionName = "test-function"
@@ -45,7 +45,7 @@ type FunctionProperties struct {
 	Policies  string    `yaml:"Policies"`
 	VPCConfig VPCConfig `yaml:"VPCConfig"`
 	LogConfig LogConfig `yaml:"LogConfig"`
-	Events    []Event   `yaml:"Events"`
+	//Events    []Event   `yaml:"Events"`
 }
 
 type VPCConfig struct {
