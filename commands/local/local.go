@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	local_client "github.com/jdcloud-serverless/sca/common/client"
-	"github.com/jdcloud-serverless/sca/common/template"
-	"github.com/jdcloud-serverless/sca/common/util"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
+
+	local_client "github.com/jdcloud-serverless/sca/common/client"
+	"github.com/jdcloud-serverless/sca/common/template"
+	"github.com/jdcloud-serverless/sca/common/util"
 
 	"github.com/spf13/cobra"
 )
@@ -23,7 +24,7 @@ const (
 
 func NewLocalCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "local [flags] [function_name]",
+		Use:   "local [flags]",
 		Short: "invoke a function in local container",
 		Long:  "invoke a function in local container",
 		RunE:  ExecLocalCommand,
@@ -35,32 +36,35 @@ func NewLocalCommand() *cobra.Command {
 }
 
 func InitLocalCmdFlags(cmd *cobra.Command) {
-	cmd.Flags().StringP("template", "t", "", "specify template yaml file")
-	cmd.Flags().StringP("event", "e", "", "specify event json file")
+	cmd.Flags().StringP("name", "n", "", "specify local invoke function name")
+	cmd.Flags().StringP("template", "t", "./template.yaml", "specify template yaml file")
+	cmd.Flags().StringP("event", "e", "{}", "specify event json file")
+	cmd.Flags().Bool("skip-pull-image", false, "specify skip pulling or update docker images")
 }
 
 func ExecLocalCommand(cmd *cobra.Command, args []string) error {
-	if len(args) == 0 {
-		return fmt.Errorf("function handler missing")
-	}
-	functionName := args[0]
+	var functionName string
+	var skipPullImage bool
+	var templateFile string = "./template.yaml"
+	var event []byte = []byte("{}")
+	var err error
 
-	tFile, err := cmd.Flags().GetString("template")
-	if err != nil {
+	if functionName, err = cmd.Flags().GetString("name"); err != nil {
 		return err
 	}
 
-	eFile, err := cmd.Flags().GetString("event")
-	if err != nil {
-		return err
+	if cmd.Flags().Changed("skip-pull-image") {
+		if skipPullImage, err = cmd.Flags().GetBool("skip-pull-image"); err != nil {
+			return err
+		}
 	}
 
-	template, err := template.LoadTemplate(tFile)
-	if err != nil {
-		return err
+	if cmd.Flags().Changed("template") {
+		if templateFile, err = cmd.Flags().GetString("template"); err != nil {
+			return err
+		}
 	}
-
-	event, err := util.ReadFile(eFile)
+	template, err := template.LoadTemplate(templateFile)
 	if err != nil {
 		return err
 	}
@@ -70,15 +74,31 @@ func ExecLocalCommand(cmd *cobra.Command, args []string) error {
 	}
 	funcProperties := template.Resources[functionName].FunctionProperties
 
+	if cmd.Flags().Changed("event") {
+		eFile, err := cmd.Flags().GetString("event")
+		if err != nil {
+			return err
+		}
+		event, err = util.ReadFile(eFile)
+		if err != nil {
+			return err
+		}
+	}
+
 	//start docker container
 	dCliet, err := NewDockerClient()
 	if err != nil {
 		return err
 	}
-	if err := dCliet.PullImage(convertRuntime(funcProperties.Runtime)); err != nil {
-		return err
+	if !skipPullImage {
+		if err := dCliet.PullImage(convertRuntime(funcProperties.Runtime)); err != nil {
+			return err
+		}
+	} else {
+		fmt.Println("skip pull", getImageName(convertRuntime(funcProperties.Runtime)))
 	}
-	codePath, err := getCodeAbsPath(tFile, funcProperties.CodeUri)
+
+	codePath, err := getCodeAbsPath(templateFile, funcProperties.CodeUri)
 	if err != nil {
 		return err
 	}

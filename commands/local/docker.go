@@ -3,6 +3,7 @@ package local
 import (
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 	"time"
@@ -56,11 +57,10 @@ func NewDockerClient() (DockerClient, error) {
 func (d *dockerClient) PullImage(runtime string) error {
 	cmdStr := fmt.Sprintf("docker pull %s", getImageName(runtime))
 	cmd := GenExecCommand(cmdStr)
-	if out, err := cmd.CombinedOutput(); err != nil {
-		fmt.Printf("%v\n\n", string(out))
-		return err
-	}
-	return nil
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+
 	//	auth := types.AuthConfig{
 	//		Username: "",
 	//		Password: "",
