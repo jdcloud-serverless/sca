@@ -1,11 +1,14 @@
 # sca local
+在deploy函数之前，可以在本地调试函数,需要安装并启动docker
 
-在deploy函数之前，可以在本地调试函数
-
-在本地调试之前，可以手动下载本地调试环境镜像(当前支持python的三个版本, sca也会自动下载)。镜像包含函数的运行环境，与线上的环境是一致的。  
+## 镜像
+可以手动下载本地调试环境镜像(当前支持python的三个版本； 如果没有下载，sca也会自动下载)。镜像包含函数的运行环境，与线上的环境是一致的  
 `docker pull sca1/python27`  
 `docker pull sca1/python36`  
-`docker pull sca1/python37`  
+`docker pull sca1/python37` 
+
+镜像存储在https://hub.docker.com，如果无法下载，可以自行生成本地镜像, 如：  
+`cd local/image/python27 && ./gen_image.sh`
 
 ## 用法
 
