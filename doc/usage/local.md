@@ -19,7 +19,7 @@
 
 ## 示例
 ```
-[root@localhost sca]# sca local --skip-pull-image -t ./helloworld/template.yaml -e ./event.json handler
+[root@localhost sca]# sca local --skip-pull-image -t ./helloworld/template.yaml -e ./event.json -n handler
 skip pull sca1/python27:latest
 {
 	"code": 0,
