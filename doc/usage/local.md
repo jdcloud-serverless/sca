@@ -9,7 +9,7 @@
 
 ## 用法
 
-`./sca local -t ./template.yaml -e ./event.json function_name`
+`sca local -t ./template.yaml -e ./event.json function_name`
 
 `template.yaml`文件可以通过`sca init`命令生成模板，针对函数属性对模板进行修改即可。
 
@@ -19,7 +19,7 @@
 
 ## 示例
 ```
-[root@localhost sca]# ./bin/sca local -t ./helloworld/template.yaml -e ./event.json handler
+[root@localhost sca]# sca local -t ./helloworld/template.yaml -e ./event.json handler
 {
 	"code": 0,
 	"return": "hello world",
