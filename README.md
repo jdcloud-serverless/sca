@@ -7,6 +7,11 @@ SCA （Serverless Cloud Application）是京东云函数计算 （Function）产
 
 SCA 通过一个资源配置文件（template.yaml），协助您进行开发、构建、部署操作。
 
+## 安装
+
+`curl -O https://raw.githubusercontent.com/jdcloud-serverless/sca/master/hack/install.sh && chmod +777 install.sh && sh install.sh && source ~/.bashrc`
+
+
 ## 开始使用
 
 通过 sca 命令行工具，你可以：
