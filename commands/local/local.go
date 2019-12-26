@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	WsgiUrl = "http://127.0.0.1:9090/invoke"
+	WsgiUrl = "http://127.0.0.1:%s/invoke"
 )
 
 func NewLocalCommand() *cobra.Command {
@@ -40,6 +40,7 @@ func InitLocalCmdFlags(cmd *cobra.Command) {
 	cmd.Flags().StringP("template", "t", "./template.yaml", "specify template yaml file")
 	cmd.Flags().StringP("event", "e", "{}", "specify event json file")
 	cmd.Flags().Bool("skip-pull-image", false, "skip pull or update docker images")
+	cmd.Flags().StringP("port", "p", "9090", "specify host port")
 }
 
 func ExecLocalCommand(cmd *cobra.Command, args []string) error {
@@ -47,6 +48,7 @@ func ExecLocalCommand(cmd *cobra.Command, args []string) error {
 	var skipPullImage bool
 	var templateFile string = "./template.yaml"
 	var event []byte = []byte("{}")
+	var hostPort string = TARGET_PORT
 	var err error
 
 	if functionName, err = cmd.Flags().GetString("name"); err != nil {
@@ -55,6 +57,12 @@ func ExecLocalCommand(cmd *cobra.Command, args []string) error {
 
 	if cmd.Flags().Changed("skip-pull-image") {
 		if skipPullImage, err = cmd.Flags().GetBool("skip-pull-image"); err != nil {
+			return err
+		}
+	}
+
+	if cmd.Flags().Changed("port") {
+		if hostPort, err = cmd.Flags().GetString("port"); err != nil {
 			return err
 		}
 	}
@@ -102,17 +110,17 @@ func ExecLocalCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if err := dCliet.CreateDocker(codePath, convertRuntime(funcProperties.Runtime)); err != nil {
-		return err
-	}
-	if err := dCliet.StartDocker(); err != nil {
+	if err := dCliet.CreateDocker(codePath, convertRuntime(funcProperties.Runtime), hostPort); err != nil {
 		return err
 	}
 	defer dCliet.RemoveDocker()
+	if err := dCliet.StartDocker(); err != nil {
+		return err
+	}
 
 	//send http request
 	time.Sleep(time.Second)
-	resp, err := json.MarshalIndent(Execute(functionName, funcProperties, event), "", "	")
+	resp, err := json.MarshalIndent(Execute(functionName, funcProperties, event, hostPort), "", "	")
 	if err != nil {
 		return err
 	}
@@ -130,7 +138,7 @@ type LocalFunctionResponseMessage struct {
 	Duration   string `json:"time_used"`
 }
 
-func Execute(functionName string, properties template.FunctionProperties, event []byte) *LocalFunctionResponseMessage {
+func Execute(functionName string, properties template.FunctionProperties, event []byte, hostPort string) *LocalFunctionResponseMessage {
 	res := new(LocalFunctionResponseMessage)
 
 	requestId := fmt.Sprintf("%s-%d", "csa-requestid", time.Now().Unix())
@@ -157,7 +165,7 @@ func Execute(functionName string, properties template.FunctionProperties, event 
 		return res
 	}
 	wsgiClient := local_client.NewHttpClient()
-	httpRsp, err := wsgiClient.Forward(WsgiUrl, http.MethodPost, bytes.NewReader(postData), header)
+	httpRsp, err := wsgiClient.Forward(fmt.Sprintf(WsgiUrl, hostPort), http.MethodPost, bytes.NewReader(postData), header)
 	if err != nil {
 		res.Stderr = err.Error()
 		res.Code = InvokeFunctionAskCode

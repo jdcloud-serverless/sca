@@ -31,7 +31,7 @@ const (
 
 type DockerClient interface {
 	PullImage(runtime string) error
-	CreateDocker(hostVolPath, runtime string) error
+	CreateDocker(hostVolPath, runtime string, hostPort string) error
 	StartDocker() error
 	StopDocker() error
 	RemoveDocker() error
@@ -79,7 +79,7 @@ func (d *dockerClient) PullImage(runtime string) error {
 	//	return nil
 }
 
-func (d *dockerClient) CreateDocker(hostVolPath, runtime string) error {
+func (d *dockerClient) CreateDocker(hostVolPath, runtime string, hostPort string) error {
 	exports := make(nat.PortSet)
 	port, err := nat.NewPort("tcp", TARGET_PORT)
 	if err != nil {
@@ -99,7 +99,7 @@ func (d *dockerClient) CreateDocker(hostVolPath, runtime string) error {
 	// -p 9090:9090
 	pBindMap := make(nat.PortMap)
 	npBind := nat.PortBinding{
-		HostPort: TARGET_PORT,
+		HostPort: hostPort,
 	}
 	pBindMap[port] = []nat.PortBinding{npBind}
 
