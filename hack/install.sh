@@ -3,5 +3,5 @@ wget -P ~/.sca/ https://github.com/jdcloud-serverless/sca/releases/download/v0.0
 
 chmod +777 ~/.sca/sca
 
-echo "PATH=$PATH:~/.sca" >> ~/.bashrc
-echo "export PATH" >> ~/.bashrc
+echo PATH='$PATH':~/.sca >> ~/.bashrc
+echo export PATH >> ~/.bashrc
