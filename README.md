@@ -11,7 +11,7 @@ SCA 通过一个资源配置文件（template.yaml），协助您进行开发、
 
 `curl -O https://raw.githubusercontent.com/jdcloud-serverless/sca/master/hack/install-linux.sh && chmod +777 install-linux.sh && sh install-linux.sh && source ~/.bashrc`
 
-`curl -O https://raw.githubusercontent.com/jdcloud-serverless/sca/master/hack/install-mac.sh && chmod +777 install-mac.sh && sh install-mac.sh && source ~/.bashrc`
+`curl -O https://raw.githubusercontent.com/jdcloud-serverless/sca/master/hack/install-mac.sh && chmod +x install-mac.sh && sh install-mac.sh && source ~/.bashrc`
 
 ## 开始使用
 
