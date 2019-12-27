@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/jdcloud-serverless/sca/commands/config"
 	"github.com/jdcloud-serverless/sca/commands/deploy"
 	"github.com/jdcloud-serverless/sca/commands/function"
@@ -10,6 +12,7 @@ import (
 	"github.com/jdcloud-serverless/sca/commands/logs"
 	"github.com/jdcloud-serverless/sca/commands/validate"
 	"github.com/jdcloud-serverless/sca/commands/version"
+	cVersion "github.com/jdcloud-serverless/sca/common/version"
 
 	"github.com/spf13/cobra"
 )
@@ -52,5 +55,10 @@ func init() {
 }
 
 func main() {
+	if code, msg := cVersion.CheckFunctionApiVersion(); code == cVersion.UpgradeVersionCode {
+		fmt.Println(msg)
+		return
+	}
+
 	RootCommand.Execute()
 }

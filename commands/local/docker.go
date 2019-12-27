@@ -153,16 +153,9 @@ func getImageName(runtime string) string {
 	return fmt.Sprintf(IMAGE, runtime)
 }
 
-func IsLinux() bool {
-	if runtime.GOOS == "linux" {
-		return true
-	}
-	return false
-}
-
 func GenExecCommand(commandStr string) *exec.Cmd {
-	if IsLinux() {
-		return exec.Command("/bin/bash", "-c", commandStr)
+	if runtime.GOOS == "windows" {
+		return exec.Command("cmd.exe", "/C", commandStr)
 	}
-	return exec.Command("cmd.exe", "/C", commandStr)
+	return exec.Command("/bin/bash", "-c", commandStr)
 }

@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,7 +15,7 @@ import (
 type HttpClient interface {
 	Post(url string, in, out interface{}, header map[string]string) error
 	Get(url string, in, out interface{}, header map[string]string) error
-	Forward(url, method string, in io.Reader, header map[string]string) (*http.Response, error)
+	Forward(url, method string, in io.Reader, header map[string]string, ctx context.Context) (*http.Response, error)
 	Do(url, method string, in, out interface{}, header map[string]string) error
 
 	SetTransportForTest(t http.RoundTripper)
@@ -48,10 +49,14 @@ func (c *httpClient) Get(url string, in, out interface{}, header map[string]stri
 	return c.Do(url, http.MethodGet, in, out, header)
 }
 
-func (c *httpClient) Forward(url, method string, in io.Reader, header map[string]string) (*http.Response, error) {
+func (c *httpClient) Forward(url, method string, in io.Reader, header map[string]string, ctx context.Context) (*http.Response, error) {
 	req, err := http.NewRequest(method, url, in)
 	if err != nil {
 		return nil, err
+	}
+
+	if ctx != nil {
+		req = req.WithContext(ctx)
 	}
 
 	if val, ok := header["Content-Length"]; ok {

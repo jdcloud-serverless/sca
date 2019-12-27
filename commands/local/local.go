@@ -165,7 +165,7 @@ func Execute(functionName string, properties template.FunctionProperties, event 
 		return res
 	}
 	wsgiClient := local_client.NewHttpClient()
-	httpRsp, err := wsgiClient.Forward(fmt.Sprintf(WsgiUrl, hostPort), http.MethodPost, bytes.NewReader(postData), header)
+	httpRsp, err := wsgiClient.Forward(fmt.Sprintf(WsgiUrl, hostPort), http.MethodPost, bytes.NewReader(postData), header, nil)
 	if err != nil {
 		res.Stderr = err.Error()
 		res.Code = InvokeFunctionAskCode
