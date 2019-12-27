@@ -9,7 +9,7 @@ SCA 通过一个资源配置文件（template.yaml），协助您进行开发、
 
 ## 安装
 
-`curl -O https://raw.githubusercontent.com/jdcloud-serverless/sca/master/hack/install.sh && chmod +777 install.sh && sh install.sh && source ~/.bashrc`
+`curl -O https://raw.githubusercontent.com/jdcloud-serverless/sca/master/hack/install-linux.sh && chmod +777 install.sh && sh install.sh && source ~/.bashrc`
 
 
 ## 开始使用
