@@ -74,27 +74,29 @@ func initFun(cmd *cobra.Command, args []string) error {
 		projectName = template.DefaultProjectName
 	}
 
-	funPath := fmt.Sprintf("%s/%s", output, projectName)
-	if err := os.MkdirAll(funPath, os.ModePerm); err != nil {
+	projectPath := fmt.Sprintf("%s/%s", output, projectName)
+	if err := os.MkdirAll(projectPath, os.ModePerm); err != nil {
 		fmt.Printf("create path err=%s\n", err.Error())
 	}
 
-	readmeFile, err := os.Create(filepath.Join(funPath, "README.md"))
+	readmeFile, err := os.Create(filepath.Join(projectPath, "README.md"))
 	if err != nil {
 		fmt.Printf("create README.md err=%s\n", err.Error())
 	}
 	defer readmeFile.Close()
 	readmeFile.WriteString("")
 
-	if err :=writeRootFile(funPath);err != nil {
-		return err
-	}
-
-	templateFile, err := os.Create(filepath.Join(funPath, "template.yaml"))
+	templateFile, err := os.Create(filepath.Join(projectPath, "template.yaml"))
 	if err != nil {
 		fmt.Printf("create template.yaml err=%s\n", err.Error())
 	}
 	defer templateFile.Close()
+
+	funPath := fmt.Sprintf("%s/%s", projectPath, template.DefaultFunctionName)
+	if err :=writeRootFile(funPath);err != nil {
+		return err
+	}
+
 	tmpl := template.Template{
 		ROSTemplateFormatVersion: template.DefaultROSTemplateFormatVersion,
 		Transform:                template.DefaultTransform,
@@ -121,6 +123,10 @@ func initFun(cmd *cobra.Command, args []string) error {
 }
 
 func writeRootFile(funPath string) error {
+	if err := os.MkdirAll(funPath, os.ModePerm); err != nil {
+		fmt.Printf("create path err=%s\n", err.Error())
+	}
+
 	switch runtime {
 	case template.RUNTIME_Python2_7, template.RUNTIME_Python3_6, template.RUNTIME_Python3_7:
 		return writeRootFile_python(funPath, runtime)
