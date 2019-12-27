@@ -55,13 +55,16 @@ func deploy(cmd *cobra.Command, args []string) error{
 		// if function not exists , execute create function
 		// if exists , execute update function
 		if exist := checkFunctionExist(user.Region, functionName, functionClient); !exist {
-			fmt.Printf("Function (%s) not exists , now beginning to create function\n", functionName)
-			return createFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
-		} else {
-			fmt.Printf("Function (%s) exists , now beginning to update function\n", functionName)
-			return updateFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
-		}
+		fmt.Printf("Function (%s) not exists , now beginning to create function\n", functionName)
+		err = createFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
+	} else {
+		fmt.Printf("Function (%s) exists , now beginning to update function\n", functionName)
+		err = updateFunction(functionName, user.Region, &v.FunctionProperties, functionClient)
 	}
+	if err != nil {
+		fmt.Printf("Deploy function (%s) error . Error : %s \n",err.Error())
+	}
+}
 	return nil
 }
 
