@@ -20,7 +20,7 @@ const (
 	host    = "unix:///var/run/docker.sock"
 	version = "1.24"
 
-	IMAGE           = "jdccloudserverless/sca:%s"
+	IMAGE           = "jdcloudchina/sca:%s"
 	TARGET_PORT     = "9090"
 	TARGET_VOL_PATH = "/function/code"
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-language="jdccloudserverless/sca"
+language="jdcloudchina/sca"
 tag="python36"
 
 docker build -t ${language}:${tag} .
