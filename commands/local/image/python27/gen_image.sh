@@ -1,6 +1,6 @@
 #!/bin/bash
 
-language="sca1/python27"
-tag="latest"
+language="jdccloudserverless/sca"
+tag="python27"
 
 docker build -t ${language}:${tag} .
