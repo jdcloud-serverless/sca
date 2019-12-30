@@ -110,7 +110,7 @@ func initFun(cmd *cobra.Command, args []string) error {
 			MemorySize:  128,
 			Runtime:     runtime,
 			Description: fmt.Sprintf("This is a template of function which name is \"%s\"", template.DefaultFunctionName),
-			CodeUri:    projectPath,
+			CodeUri:    funPath,
 		},
 	}
 	writeTemplate(tmpl.Resources[projectName])
