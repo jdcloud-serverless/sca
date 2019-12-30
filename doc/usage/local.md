@@ -42,5 +42,4 @@ Status: Image is up to date for jdcloudchina/sca:python37
 	"memory_used": "0.10m",
 	"time_used": "3.540233ms"
 }
-[root@localhost sca]#
 ```
