@@ -191,6 +191,10 @@ func compress(codeUri string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	f,_ := os.Stat(dirPath)
+	if !f.IsDir(){
+		dirPath = dirPath+"/"
+	}
 	zipFilePath := dirPath + ZipFileSuffix
 	err = archiver.Archive([]string{dirPath}, zipFilePath)
 	if err != nil {
